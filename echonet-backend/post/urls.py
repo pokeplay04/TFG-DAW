@@ -5,9 +5,7 @@ from . import api
 
 urlpatterns= [
     path('', api.post_list, name='post_list'),
-    path('api/', include('account.urls')),
-    path('api/posts/', include('post.url')),
-    path('admin/', admin.site.urls),
-    
+    path('create/', api.post_create, name='post_create'),
+
 
 ]
