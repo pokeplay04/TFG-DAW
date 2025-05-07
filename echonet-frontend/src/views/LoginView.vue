@@ -8,7 +8,7 @@
                 </p>
 
                 <p class="font-bold">
-                    Don't have an account? <RouterLink :to="{'name': 'signup'}" class="underline">Click here</RouterLink> to create one!
+                    No tienes una cuenta? <RouterLink :to="{'name': 'signup'}" class="underline">Clica aquí</RouterLink> para crearte una!
                 </p>
             </div>
         </div>
@@ -17,7 +17,7 @@
             <div class="p-12 bg-white border border-gray-200 rounded-lg">
                 <form class="space-y-6" v-on:submit.prevent="submitForm">
                     <div>
-                        <label>E-mail</label><br>
+                        <label>Email</label><br>
                         <input type="email" v-model="form.email" placeholder="Your e-mail address" class="w-full mt-2 py-4 px-6 border border-gray-200 rounded-lg">
                     </div>
 
