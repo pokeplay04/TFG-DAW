@@ -5,7 +5,7 @@
 
 ### Funcionalidades destacadas
 
-- Login con Spotify (OAuth) vía Spotipy
+- Login con Spotify vía Spotipy
 
 - Perfil musical personalizado con tus datos de cuenta
 
@@ -17,7 +17,7 @@
 
 - Interfaz ágil y responsive con Vue.js + Axios
 
-- Backend robusto en Djan3go REST Framework
+- Backend robusto en Django REST Framework
 
 ---
 
