@@ -1,44 +1,58 @@
 <template>
-    <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4">
-        <div class="main-left">
-            <div class="p-12 bg-white border border-gray-200 rounded-lg">
-                <h1 class="mb-6 text-2xl">Edit profile</h1>
-
-                <p class="mb-6 text-gray-500">
-                </p>
-
-                <RouterLink to="/profile/edit/password" class="underline">Edit password</RouterLink>
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left Section -->
+            <div class="col-lg-6">
+                <div class="bg-white border rounded p-5">
+                    <h1 class="mb-4 h4">Edit profile</h1>
+                    <p class="text-muted mb-4"></p>
+                    <RouterLink to="/profile/edit/password" class="text-decoration-underline">Edit password</RouterLink>
+                </div>
             </div>
-        </div>
 
-        <div class="main-right">
-            <div class="p-12 bg-white border border-gray-200 rounded-lg">
-                <form class="space-y-6" v-on:submit.prevent="submitForm">
-                    <div>
-                        <label>Name</label><br>
-                        <input type="text" v-model="form.name" placeholder="Your full name" class="w-full mt-2 py-4 px-6 border border-gray-200 rounded-lg">
-                    </div>
-
-                    <div>
-                        <label>E-mail</label><br>
-                        <input type="email" v-model="form.email" placeholder="Your e-mail address" class="w-full mt-2 py-4 px-6 border border-gray-200 rounded-lg">
-                    </div>
-
-                    <div>
-                        <label>Avatar</label><br>
-                        <input type="file" ref="file">
-                    </div>
-
-                    <template v-if="errors.length > 0">
-                        <div class="bg-red-300 text-white rounded-lg p-6">
-                            <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+            <!-- Right Section -->
+            <div class="col-lg-6">
+                <div class="bg-white border rounded p-5">
+                    <form @submit.prevent="submitForm">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input
+                                type="text"
+                                v-model="form.name"
+                                class="form-control"
+                                placeholder="Your full name"
+                            />
                         </div>
-                    </template>
 
-                    <div>
-                        <button class="py-4 px-6 bg-purple-600 text-white rounded-lg">Save changes</button>
-                    </div>
-                </form>
+                        <div class="mb-3">
+                            <label class="form-label">E-mail</label>
+                            <input
+                                type="email"
+                                v-model="form.email"
+                                class="form-control"
+                                placeholder="Your e-mail address"
+                            />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Avatar</label>
+                            <input
+                                type="file"
+                                ref="file"
+                                class="form-control"
+                            />
+                        </div>
+
+                        <!-- Error messages -->
+                        <div v-if="errors.length > 0" class="alert alert-danger">
+                            <p v-for="error in errors" :key="error">{{ error }}</p>
+                        </div>
+
+                        <div>
+                            <button class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -84,8 +98,8 @@ export default {
             }
 
             if (this.errors.length === 0) {
-                let formData = new FormData()
-                formData.append('avatar', this.$refs.file.files[0])
+                const formData = new FormData()
+                formData.append('avatar', this.$refs.file?.files[0])
                 formData.append('name', this.form.name)
                 formData.append('email', this.form.email)
 
@@ -97,7 +111,7 @@ export default {
                     })
                     .then(response => {
                         if (response.data.message === 'information updated') {
-                            this.toastStore.showToast(5000, 'The information was saved', 'bg-emerald-500')
+                            this.toastStore.showToast(5000, 'The information was saved', 'bg-success')
 
                             this.userStore.setUserInfo({
                                 id: this.userStore.user.id,
@@ -108,7 +122,7 @@ export default {
 
                             this.$router.back()
                         } else {
-                            this.toastStore.showToast(5000, `${response.data.message}. Please try again`, 'bg-red-300')
+                            this.toastStore.showToast(5000, `${response.data.message}. Please try again`, 'bg-danger')
                         }
                     })
                     .catch(error => {

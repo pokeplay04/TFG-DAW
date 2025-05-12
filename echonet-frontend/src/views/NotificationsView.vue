@@ -1,22 +1,24 @@
 <template>
-    <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
-        <div class="main-center col-span-3 space-y-4">
-            <div 
-                class="p-4 bg-white border border-gray-200 rounded-lg"
-                v-for="notification in notifications"
-                v-bind:key="notification.id"
-                v-if="notifications.length"
-            >
-                {{ notification.body }} 
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+                <div 
+                    class="bg-white border rounded p-4 mb-3"
+                    v-for="notification in notifications"
+                    :key="notification.id"
+                    v-if="notifications.length"
+                >
+                    {{ notification.body }}
 
-                <button class="underline" @click="readNotification(notification)">Read more</button>
-            </div>
+                    <button class="btn btn-link p-0 ms-2" @click="readNotification(notification)">Read more</button>
+                </div>
 
-            <div 
-                class="p-4 bg-white border border-gray-200 rounded-lg"
-                v-else
-            >
-                You don't have any unread notifications!
+                <div 
+                    class="bg-white border rounded p-4"
+                    v-else
+                >
+                    You don't have any unread notifications!
+                </div>
             </div>
         </div>
     </div>
@@ -43,8 +45,6 @@ export default {
             axios
                 .get('/api/notifications/')
                 .then(response => {
-                    console.log(response.data)
-
                     this.notifications = response.data
                 })
                 .catch(error => {
@@ -53,17 +53,13 @@ export default {
         },
 
         async readNotification(notification) {
-            console.log('readNotification', notification.id)
-
             await axios
                 .post(`/api/notifications/read/${notification.id}/`)
                 .then(response => {
-                    console.log(response.data)
-
-                    if (notification.type_of_notification == 'post_like' || notification.type_of_notification == 'post_comment') {
-                        this.$router.push({name: 'postview', params: {id: notification.post_id}})
+                    if (notification.type_of_notification === 'post_like' || notification.type_of_notification === 'post_comment') {
+                        this.$router.push({ name: 'postview', params: { id: notification.post_id } })
                     } else {
-                        this.$router.push({name: 'friends', params: {id: notification.created_for_id}})
+                        this.$router.push({ name: 'friends', params: { id: notification.created_for_id } })
                     }
                 })
                 .catch(error => {

@@ -1,25 +1,27 @@
 <template>
-    <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
-        <div class="main-center col-span-3 space-y-4">
-            <div 
-                class="p-4 bg-white border border-gray-200 rounded-lg"
-            >
-                <h2 class="text-xl">Trend: #{{ $route.params.id }}</h2>
+    <div class="container">
+        <div class="row">
+            <!-- Left Section (Trending Posts) -->
+            <div class="col-lg-9">
+                <div class="bg-white border rounded p-4">
+                    <h2 class="h4">Trend: #{{ $route.params.id }}</h2>
+                </div>
+                
+                <div 
+                    class="bg-white border rounded-lg p-4 mb-4"
+                    v-for="post in posts"
+                    :key="post.id"
+                >
+                    <FeedItem :post="post" />
+                </div>
             </div>
-            
-            <div 
-                class="p-4 bg-white border border-gray-200 rounded-lg"
-                v-for="post in posts"
-                v-bind:key="post.id"
-            >
-                <FeedItem v-bind:post="post" />
+
+            <!-- Right Section (Suggested People & Trends) -->
+            <div class="col-lg-3">
+                <PeopleYouMayKnow />
+
+                <Trends />
             </div>
-        </div>
-
-        <div class="main-right col-span-1 space-y-4">
-            <PeopleYouMayKnow />
-
-            <Trends />
         </div>
     </div>
 </template>
@@ -31,7 +33,7 @@ import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
 
 export default {
-    name: 'FeedView',
+    name: 'TrendView',
 
     components: {
         PeopleYouMayKnow,
@@ -65,7 +67,6 @@ export default {
                 .get(`/api/posts/?trend=${this.$route.params.id}`)
                 .then(response => {
                     console.log('data', response.data)
-
                     this.posts = response.data
                 })
                 .catch(error => {

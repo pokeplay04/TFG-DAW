@@ -1,26 +1,35 @@
 <template>
-    <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
-        <div class="main-center col-span-3 space-y-4">
-            <div class="bg-white border border-gray-200 rounded-lg">
-                <FeedForm 
-                    v-bind:user="null" 
-                    v-bind:posts="posts"
-                />
+    <div class="container">
+        <div class="row g-4">
+            <!-- Main content area (3/4 columns) -->
+            <div class="col-lg-9">
+                <!-- Feed form -->
+                <div class="bg-white border rounded mb-3 p-3">
+                    <FeedForm 
+                        :user="null" 
+                        :posts="posts"
+                    />
+                </div>
+
+                <!-- Posts -->
+                <div 
+                    class="bg-white border rounded p-3 mb-3"
+                    v-for="post in posts"
+                    :key="post.id"
+                >
+                    <FeedItem :post="post" @deletePost="deletePost" />
+                </div>
             </div>
 
-            <div 
-                class="p-4 bg-white border border-gray-200 rounded-lg"
-                v-for="post in posts"
-                v-bind:key="post.id"
-            >
-                <FeedItem v-bind:post="post" v-on:deletePost="deletePost" />
+            <!-- Sidebar (1/4 columns) -->
+            <div class="col-lg-3">
+                <div class="mb-3">
+                    <PeopleYouMayKnow />
+                </div>
+                <div>
+                    <Trends />
+                </div>
             </div>
-        </div>
-
-        <div class="main-right col-span-1 space-y-4">
-            <PeopleYouMayKnow />
-
-            <Trends />
         </div>
     </div>
 </template>
@@ -58,12 +67,10 @@ export default {
             axios
                 .get('/api/posts/')
                 .then(response => {
-                    console.log('data', response.data)
-
                     this.posts = response.data
                 })
                 .catch(error => {
-                    console.log('error', error)
+                    console.error('Error fetching feed:', error)
                 })
         },
 
