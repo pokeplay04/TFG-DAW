@@ -1,25 +1,35 @@
-# EchoNet
+### 🎧 EchoNet
 
-**Proyecto de Fin de Curso – Desarrollo de Aplicaciones Web**
-
-EchoNet es una red social centrada en la música. Los usuarios inician sesión con su cuenta de Spotify y pueden mostrar su perfil musical (artistas top, playlists, etc.), publicar contenido, comentar y chatear con otros usuarios.
 
 ---
 
-## Funcionalidades
+### Funcionalidades destacadas
 
-- Autenticación con Spotify (Authorization Code Flow)
-- Perfil musical con datos reales vía Spotipy
-- Sistema de publicaciones y comentarios
-- Chats privados entre usuarios
+- Login con Spotify (OAuth) vía Spotipy
+
+- Perfil musical personalizado con tus datos de cuenta
+
+- Muro social: postea lo que escuchas, piensas o sientes
+
+- Comentarios y reacciones en publicaciones
+
+- Chat entre usuarios en tiempo real
+
+- Interfaz ágil y responsive con Vue.js + Axios
+
+- Backend robusto en Djan3go REST Framework
 
 ---
 
-## Tecnologías utilizadas
+### Tecnologías
 
-- Frontend: Vue.js + Axios  
-- Backend: Django + Django REST Framework  
-- API: Spotipy (Spotify Web API)  
-- Base de datos: Sqlite3
+| Tecnología   | Función                                |
+|--------------|-------------------------------------------|
+| Vue.js       | Interfaz de usuario      |
+| Axios        | Peticiones HTTP entre frontend y backend  |
+| Django + DRF | Backend estructurado y API REST           |
+| Spotipy      | Integración con Spotify API               |
+| PostgreSQL   | Base de datos                  |
+| Bootstrap + CSS | Estilos personalizados, responsive     |
 
 ---
