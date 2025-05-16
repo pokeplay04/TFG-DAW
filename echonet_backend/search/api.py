@@ -2,6 +2,8 @@ from django.db.models import Q
 from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from account.models import SpotifyUser
 from account.serializers import SpotifyUserSerializer
@@ -10,6 +12,8 @@ from post.serializers import PostSerializer
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def search(request):
     data = request.data
     query = data['query']

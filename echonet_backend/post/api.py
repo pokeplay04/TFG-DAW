@@ -2,6 +2,8 @@ from django.db.models import Q
 from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from account.models import SpotifyUser, FriendshipRequest
 from account.serializers import SpotifyUserSerializer
@@ -13,6 +15,8 @@ from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_list(request):
     user_ids = [request.user.id]
 
@@ -32,6 +36,8 @@ def post_list(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_detail(request, pk):
     user_ids = [request.user.id]
 
@@ -46,6 +52,8 @@ def post_detail(request, pk):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_list_profile(request, id):   
     user = SpotifyUser.objects.get(pk=id)
     posts = Post.objects.filter(created_by_id=id)
@@ -75,6 +83,8 @@ def post_list_profile(request, id):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_create(request):
     form = PostForm(request.POST)
     attachment = None
@@ -105,6 +115,8 @@ def post_create(request):
     
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_like(request, pk):
     post = Post.objects.get(pk=pk)
 
@@ -124,6 +136,8 @@ def post_like(request, pk):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_create_comment(request, pk):
     comment = Comment.objects.create(body=request.data.get('body'), created_by=request.user)
 
@@ -140,6 +154,8 @@ def post_create_comment(request, pk):
 
 
 @api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_delete(request, pk):
     post = Post.objects.filter(created_by=request.user).get(pk=pk)
     post.delete()
@@ -148,6 +164,8 @@ def post_delete(request, pk):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def post_report(request, pk):
     post = Post.objects.get(pk=pk)
     post.reported_by_users.add(request.user)
@@ -157,6 +175,8 @@ def post_report(request, pk):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_trends(request):
     serializer = TrendSerializer(Trend.objects.all(), many=True)
 
