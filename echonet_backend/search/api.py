@@ -3,8 +3,8 @@ from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
-from account.models import User
-from account.serializers import UserSerializer
+from account.models import SpotifyUser
+from account.serializers import SpotifyUserSerializer
 from post.models import Post
 from post.serializers import PostSerializer
 
@@ -18,8 +18,8 @@ def search(request):
     for user in request.user.friends.all():
         user_ids.append(user.id)
 
-    users = User.objects.filter(name__icontains=query)
-    users_serializer = UserSerializer(users, many=True)
+    users = SpotifyUser.objects.filter(name__icontains=query)
+    users_serializer = SpotifyUserSerializer(users, many=True)
 
     posts = Post.objects.filter(
         Q(body__icontains=query, is_private=False) | 

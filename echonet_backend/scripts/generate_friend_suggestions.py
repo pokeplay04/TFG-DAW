@@ -12,10 +12,10 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "echonet_backend.settings")
 django.setup()
 
 
-from account.models import User
+from account.models import SpotifyUser
 
 
-users = User.objects.all()
+users = SpotifyUser.objects.all()
 
 for user in users:
     # Clear the suggestion list

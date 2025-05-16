@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from account.serializers import UserSerializer
+from account.serializers import SpotifyUserSerializer
 
 from .models import Post, PostAttachment, Comment, Trend
 
@@ -12,7 +12,7 @@ class PostAttachmentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+    created_by = SpotifyUserSerializer(read_only=True)
     attachments = PostAttachmentSerializer(read_only=True, many=True)
 
     class Meta:
@@ -21,7 +21,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+    created_by = SpotifyUserSerializer(read_only=True)
 
     class Meta:
         model = Comment
@@ -29,7 +29,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+    created_by = SpotifyUserSerializer(read_only=True)
     comments = CommentSerializer(read_only=True, many=True)
     attachments = PostAttachmentSerializer(read_only=True, many=True)
 
