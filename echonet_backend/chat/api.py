@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from account.models import SpotifyUser
 
@@ -9,6 +11,8 @@ from .serializers import ConversationSerializer, ConversationDetailSerializer, C
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def conversation_list(request):
     conversations = Conversation.objects.filter(users__in=list([request.user]))
     serializer = ConversationSerializer(conversations, many=True)
@@ -17,6 +21,8 @@ def conversation_list(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def conversation_detail(request, pk):
     conversation = Conversation.objects.filter(users__in=list([request.user])).get(pk=pk)
     serializer = ConversationDetailSerializer(conversation)
@@ -25,6 +31,8 @@ def conversation_detail(request, pk):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def conversation_get_or_create(request, user_pk):
     user = SpotifyUser.objects.get(pk=user_pk)
 
@@ -43,6 +51,8 @@ def conversation_get_or_create(request, user_pk):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def conversation_send_message(request, pk):
     conversation = Conversation.objects.filter(users__in=list([request.user])).get(pk=pk)
 

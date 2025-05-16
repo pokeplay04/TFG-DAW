@@ -4,6 +4,8 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from notification.utils import create_notification
 
@@ -13,6 +15,8 @@ from .serializers import SpotifyUserSerializer, FriendshipRequestSerializer
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def me(request):
     return JsonResponse({
         'id': request.user.id,
@@ -20,11 +24,12 @@ def me(request):
         'email': request.user.email,
         'avatar': request.user.get_avatar()
     })
-    print(request.user)
 
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def friends(request, pk):
     user = SpotifyUser.objects.get(pk=pk)
     requests = []
@@ -44,6 +49,8 @@ def friends(request, pk):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def my_friendship_suggestions(request):
     serializer = SpotifyUserSerializer(request.user.people_you_may_know.all(), many=True)
 
@@ -51,6 +58,8 @@ def my_friendship_suggestions(request):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def editprofile(request):
     user = request.user
 
@@ -65,6 +74,8 @@ def editprofile(request):
     
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def send_friendship_request(request, pk):
     user = SpotifyUser.objects.get(pk=pk)
 
@@ -82,6 +93,8 @@ def send_friendship_request(request, pk):
 
 
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def handle_request(request, pk, status):
     user = SpotifyUser.objects.get(pk=pk)
     friendship_request = FriendshipRequest.objects.filter(created_for=request.user).get(created_by=user)

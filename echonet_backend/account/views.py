@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import redirect
 from django.conf import settings
 import requests
@@ -11,6 +12,14 @@ from urllib.parse import urlparse
 import requests, os, datetime
 import unicodedata
 from urllib.parse import urlencode
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
+
 
 
 CLIENT_ID = '78cc48f673894cf1b8a45ecc5ff98c16'
@@ -43,24 +52,53 @@ def spotify_callback(request):
     }
 
     token_response = requests.post('https://accounts.spotify.com/api/token', data=payload)
-    token_data = token_response.json()
+
+    if token_response.status_code != 200:
+        # 👇 Mostrar el error devuelto por Spotify (suele estar en texto plano o HTML si es fallo grave)
+        error_message = token_response.text
+        print("❌ Error al obtener token de Spotify:")
+        print("Status code:", token_response.status_code)
+        print("Response:", error_message)
+        return JsonResponse({'error': 'No se pudo obtener token de Spotify', 'details': error_message}, status=token_response.status_code)
+
+    try:
+        token_data = token_response.json()
+    except ValueError:
+        return JsonResponse({'error': 'La respuesta de Spotify no es JSON válido'}, status=500)
 
     access_token = token_data.get('access_token')
     refresh_token = token_data.get('refresh_token')
     expires_in = token_data.get('expires_in')
 
     if not access_token:
-        return JsonResponse({'error': 'No access token returned by Spotify'}, status=400)
+        return JsonResponse({'error': 'Spotify no devolvió un token de acceso'}, status=400)
 
-    user_profile = requests.get(
+    user_profile_response = requests.get(
         'https://api.spotify.com/v1/me',
         headers={'Authorization': f'Bearer {access_token}'}
-    ).json()
+    )
+
+    if user_profile_response.status_code != 200:
+        print("❌ Error al obtener perfil de usuario de Spotify")
+        print("Status code:", user_profile_response.status_code)
+        print("Response:", user_profile_response.text)
+
+        try:
+            error_json = user_profile_response.json()
+        except ValueError:
+            error_json = {'error': 'Respuesta no es JSON válido', 'raw': user_profile_response.text}
+
+        return JsonResponse({
+            'error': 'No se pudo obtener perfil de usuario de Spotify',
+            'spotify_response': error_json,
+        }, status=500)
+    
+    user_profile = user_profile_response.json()
 
     spotify_id = user_profile['id']
     email = user_profile['email']
     display_name = remove_non_ascii(user_profile['display_name'])
-    
+
     token_expires = timezone.now() + datetime.timedelta(seconds=expires_in)
 
     avatar_url = user_profile['images'][0]['url'] if user_profile.get('images') else None
@@ -69,7 +107,7 @@ def spotify_callback(request):
     if avatar_url:
         response = requests.get(avatar_url)
         if response.status_code == 200:
-            file_name = os.path.basename(urlparse(avatar_url).path)+'.jpg' or 'spotify_avatar.jpg'
+            file_name = os.path.basename(urlparse(avatar_url).path) + '.jpg' or 'spotify_avatar.jpg'
             avatar_file = ContentFile(response.content, name=file_name)
 
     # Crear o actualizar el usuario
@@ -90,32 +128,23 @@ def spotify_callback(request):
 
     login(request, user)
 
-    # Guardar también en la sesión si quieres
-    request.session['spotify_token'] = access_token
-    request.session['spotify_token_expiry'] = token_expires.isoformat() if token_expires else None
+    # 🔑 Generar JWT con SimpleJWT
+    tokens = get_tokens_for_user(user)
+    access_jwt = tokens['access']
+    refresh_jwt = tokens['refresh']
 
-    # # ✅ Establecer cookies seguras
-    # expires = datetime.datetime.utcnow() + datetime.timedelta(days=7)
-
-    # response = HttpResponseRedirect(FRONTEND_URL)  # Redirige al frontend
-    # response.set_cookie('access', access_token, httponly=True, secure=True, samesite='Lax', expires=expires)
-    # response.set_cookie('refresh', refresh_token, httponly=True, secure=True, samesite='Lax', expires=expires)
-    # response.set_cookie('user_id', str(user.id), httponly=False, expires=expires)  # visible por JS si quieres
-    # response.set_cookie('user_name', user.display_name, httponly=False, expires=expires)
-    # response.set_cookie('user_email', user.email, httponly=False, expires=expires)
-    # response.set_cookie('user_avatar', user.avatar.url if user.avatar else '', httponly=False, expires=expires)
+    # ✅ Redirigir al frontend con los datos codificados en la URL
     params = {
-        'access': access_token,
-        'refresh': refresh_token,
+        'access': access_jwt,
+        'refresh': refresh_jwt,
         'id': user.id,
         'display_name': user.display_name,
         'email': user.email,
         'avatar': user.avatar.url if user.avatar else '',
     }
 
-    # Redirige al frontend con los datos en la URL
-    url = f"{FRONTEND_URL}?{urlencode(params)}"
-    return HttpResponseRedirect(url)
+    redirect_url = f"{FRONTEND_URL}?{urlencode(params)}"
+    return HttpResponseRedirect(redirect_url)
 
 def remove_non_ascii(text):
     return unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('ascii')
