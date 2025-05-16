@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from account.serializers import UserSerializer
+from account.serializers import SpotifyUserSerializer
 
 from .models import Notification
 

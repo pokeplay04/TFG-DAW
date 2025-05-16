@@ -2,7 +2,7 @@ from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
-from account.models import User
+from account.models import SpotifyUser
 
 from .models import Conversation, ConversationMessage
 from .serializers import ConversationSerializer, ConversationDetailSerializer, ConversationMessageSerializer
@@ -26,7 +26,7 @@ def conversation_detail(request, pk):
 
 @api_view(['GET'])
 def conversation_get_or_create(request, user_pk):
-    user = User.objects.get(pk=user_pk)
+    user = SpotifyUser.objects.get(pk=user_pk)
 
     conversations = Conversation.objects.filter(users__in=list([request.user])).filter(users__in=list([user]))
 

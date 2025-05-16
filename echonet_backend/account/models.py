@@ -1,39 +1,35 @@
 import uuid
 
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 from django.utils import timezone
 
+# class CustomUserManager(UserManager):
 
-
-class CustomUserManager(UserManager):
-    def _create_user(self, name, email, password, **extra_fields):
-        if not email:
-            raise ValueError("You have not provided a valid e-mail address")
-        
+class SpotifyUserManager(BaseUserManager):
+    def create_user(self, spotify_id, email, display_name, **extra_fields):
+        if not spotify_id:
+            raise ValueError('El usuario debe tener un ID de Spotify')
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name, **extra_fields)
-        user.set_password(password)
+        user = self.model(spotify_id=spotify_id, email=email, display_name=display_name, **extra_fields)
+        user.set_unusable_password() #Sin contraseña porque se autentica con Spotify
         user.save(using=self._db)
-
         return user
     
-    def create_user(self, name=None, email=None, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
-        return self._create_user(name, email, password, **extra_fields)
-    
-    def create_superuser(self, name=None, email=None, password=None, **extra_fields):
+    def create_superuser(self, spotify_id, email, display_name, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self._create_user(name, email, password, **extra_fields)
+        return self.create_user(spotify_id, email, display_name, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class SpotifyUser(AbstractBaseUser, PermissionsMixin):
+    spotify_id = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255, blank=True, default='')
+    display_name = models.CharField(max_length=255)
+    access_token = models.TextField()
+    refresh_token = models.TextField()
+    token_expires = models.DateTimeField()
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
     friends = models.ManyToManyField('self')
     friends_count = models.IntegerField(default=0)
@@ -49,17 +45,21 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     last_login = models.DateTimeField(blank=True, null=True)
 
-    objects = CustomUserManager()
-
+    objects = SpotifyUserManager()
     USERNAME_FIELD = 'email'
-    EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['spotify_id']
+
+
+    def __str__(self):
+        return self.display_name
+
 
     def get_avatar(self):
         if self.avatar:
             return settings.WEBSITE_URL + self.avatar.url
         else:
             return 'https://picsum.photos/200/200'
+
 
 
 class FriendshipRequest(models.Model):
@@ -74,7 +74,7 @@ class FriendshipRequest(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_for = models.ForeignKey(User, related_name='received_friendshiprequests', on_delete=models.CASCADE)
+    created_for = models.ForeignKey(SpotifyUser, related_name='received_friendshiprequests', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='created_friendshiprequests', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(SpotifyUser, related_name='created_friendshiprequests', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=SENT)
