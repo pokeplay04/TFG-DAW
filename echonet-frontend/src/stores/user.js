@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from "@/utils/axios"
 
 export const useUserStore = defineStore('user', {
 
@@ -85,7 +85,7 @@ export const useUserStore = defineStore('user', {
         },
 
         refreshToken() {
-            axios.post('/api/refresh/', {
+            axios.post('refresh/', {
                 refresh: this.user.refresh
             })
                 .then((response) => {
