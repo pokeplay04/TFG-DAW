@@ -21,7 +21,7 @@
     </template>
     
     <script>
-    import axios from 'axios'
+    import axios from "@/utils/axios"
     
     export default {
         data() {
@@ -37,7 +37,7 @@
         methods: {
             getFriendSuggestions() {
                 axios
-                    .get('/api/friends/suggested/')
+                    .get('friends/suggested/')
                     .then(response => {
                         console.log(response.data)
     

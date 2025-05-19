@@ -1,30 +1,42 @@
 <template>
-    <form v-on:submit.prevent="submitForm" method="post">
-        <div class="p-4">  
-            <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg" placeholder="What are you thinking about?"></textarea>
+  <form @submit.prevent="submitForm" method="post" class="card p-4 shadow-sm">
+    <!-- Texto del post -->
+    <div class="mb-3">
+      <label for="postBody" class="form-label">What are you thinking about?</label>
+      <textarea v-model="body" id="postBody" class="form-control" rows="3" placeholder="Write something..."></textarea>
+    </div>
 
-            <label>
-                <input type="checkbox" v-model="is_private"> Private
-            </label>
+    <!-- Checkbox de privacidad -->
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" v-model="is_private" id="isPrivate">
+      <label class="form-check-label" for="isPrivate">Private</label>
+    </div>
 
-            <div id="preview" v-if="url">
-                <img :src="url" class="w-[100px] mt-3 rounded-xl" />
-            </div>
-        </div>
+    <!-- Vista previa de la imagen -->
+    <div v-if="url" class="mb-3">
+      <label class="form-label">Image preview:</label><br />
+      <img :src="url" class="rounded img-thumbnail" style="max-width: 150px;" />
+    </div>
 
-        <div class="p-4 border-t border-gray-100 flex justify-between">
-            <label class="inline-block py-4 px-6 bg-gray-600 text-white rounded-lg">
-                <input type="file" ref="file" @change="onFileChange">
-                Attach image
-            </label>
+    <!-- Selector de archivo e imagen -->
+    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+      <div>
+        <label class="btn btn-outline-secondary btn-sm">
+          Attach image
+          <input type="file" ref="file" @change="onFileChange" hidden />
+        </label>
+      </div>
 
-            <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg">Post</button>
-        </div>
-    </form>
+      <!-- Botón de envío -->
+      <button type="submit" class="btn btn-success">
+        Post
+      </button>
+    </div>
+  </form>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 
 export default {
     props: {
@@ -41,37 +53,55 @@ export default {
     },
 
     methods: {
-        submitForm() {
-            console.log('submitForm', this.body)
+        onFileChange(event) {
+            const file = event.target.files[0];
 
-            let formData = new FormData()
-            formData.append('image', this.$refs.file.files[0])
-            formData.append('body', this.body)
-            formData.append('is_private', this.is_private)
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    this.url = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                this.url = null;
+                this.$refs.file.value = null;
+                alert("Please select a valid image file.");
+            }
+        },
+
+        submitForm() {
+            console.log('submitForm', this.body);
+
+            let formData = new FormData();
+            formData.append('image', this.$refs.file.files[0]);
+            formData.append('body', this.body);
+            formData.append('is_private', this.is_private);
 
             axios
-                .post('/api/posts/create/', formData, {
+                .post('posts/create/', formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     }
                 })
                 .then(response => {
-                    console.log('data', response.data)
+                    console.log('data', response.data);
 
-                    this.posts.unshift(response.data)
-                    this.body = ''
-                    this.is_private = false
-                    this.$refs.file.value = null
-                    this.url = null
+                    this.posts.unshift(response.data);
+                    this.body = '';
+                    this.is_private = false;
+                    this.$refs.file.value = null;
+                    this.url = null;
 
                     if (this.user) {
-                        this.user.posts_count += 1
+                        this.user.posts_count += 1;
                     }
                 })
                 .catch(error => {
-                    console.log('error', error)
-                })
-        },
+                    console.log('error', error);
+                });
+        }
     }
 }
 </script>

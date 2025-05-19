@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 
 export default {
     name: 'trends',
@@ -38,7 +38,7 @@ export default {
     methods: {
         getTrends() {
             axios
-                .get('/api/posts/trends/')
+                .get('posts/trends/')
                 .then(response => {
                     console.log(response.data)
             
