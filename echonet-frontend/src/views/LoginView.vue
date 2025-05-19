@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import { useUserStore } from '@/stores/user'
 
 export default {
@@ -78,11 +78,11 @@ export default {
 
             if (this.errors.length === 0) {
                 try {
-                    const response = await axios.post('/api/login/', this.form)
+                    const response = await axios.post('login/', this.form)
                     this.userStore.setToken(response.data)
                     axios.defaults.headers.common["Authorization"] = "Bearer " + response.data.access
 
-                    const userResponse = await axios.get('/api/me/')
+                    const userResponse = await axios.get('me/')
                     this.userStore.setUserInfo(userResponse.data)
                     this.$router.push('/feed')
 

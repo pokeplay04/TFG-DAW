@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container text-black">
         <div class="row">
             <!-- Left Section (Profile Info) -->
             <div class="col-lg-3">
@@ -94,7 +94,7 @@ input[type="file"] {
 </style>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
@@ -126,7 +126,11 @@ export default {
         return {
             posts: [],
             user: {
-                id: ''
+                id: localStorage.getItem('user_id'),
+                get_avatar: localStorage.getItem('get_avatar'),
+                name: localStorage.getItem('name'),
+                friends_count: localStorage.getItem('friends_count'),
+                posts_count: localStorage.getItem('posts_count'),
             },
             can_send_friendship_request: null,
         }
@@ -153,7 +157,7 @@ export default {
 
         sendDirectMessage() {
             axios
-                .get(`/api/chat/${this.$route.params.id}/get-or-create/`)
+                .get(`chat/${this.$route.params.id}/get-or-create/`)
                 .then(response => {
                     this.$router.push('/chat')
                 })
@@ -164,7 +168,7 @@ export default {
 
         sendFriendshipRequest() {
             axios
-                .post(`/api/friends/${this.$route.params.id}/request/`)
+                .post(`friends/${this.$route.params.id}/request/`)
                 .then(response => {
                     this.can_send_friendship_request = false
 
@@ -181,7 +185,7 @@ export default {
 
         getFeed() {
             axios
-                .get(`/api/posts/profile/${this.$route.params.id}/`)
+                .get(`posts/profile/${this.$route.params.id}/`)
                 .then(response => {
                     this.posts = response.data.posts
                     this.user = response.data.user

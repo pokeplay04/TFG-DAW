@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
@@ -64,7 +64,7 @@ export default {
     methods: {
         getFeed() {
             axios
-                .get(`/api/posts/?trend=${this.$route.params.id}`)
+                .get(`posts/?trend=${this.$route.params.id}`)
                 .then(response => {
                     console.log('data', response.data)
                     this.posts = response.data

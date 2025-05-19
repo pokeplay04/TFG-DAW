@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import { useUserStore } from '@/stores/user'
@@ -130,7 +130,7 @@ export default {
     methods: {
         getFriends() {
             axios
-                .get(`/api/friends/${this.$route.params.id}/`)
+                .get(`friends/${this.$route.params.id}/`)
                 .then(response => {
                     this.friendshipRequests = response.data.requests
                     this.friends = response.data.friends
@@ -143,7 +143,7 @@ export default {
 
         handleRequest(status, pk) {
             axios
-                .post(`/api/friends/${pk}/${status}/`)
+                .post(`friends/${pk}/${status}/`)
                 .then(response => {
                     this.getFriends()
                 })

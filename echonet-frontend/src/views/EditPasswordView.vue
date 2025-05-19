@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 
 import { useToastStore } from '@/stores/toast'
 import { useUserStore } from '@/stores/user'
@@ -101,7 +101,7 @@ export default {
                 formData.append('new_password2', this.form.new_password2)
 
                 axios
-                    .post('/api/editpassword/', formData, {
+                    .post('editpassword/', formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         }

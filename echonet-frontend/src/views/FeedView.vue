@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
@@ -64,8 +64,10 @@ export default {
 
     methods: {
         getFeed() {
+            console.log('localStorage:', localStorage.getItem('access_token'))
+            console.log('localStorage:', localStorage.getItem('refresh_token'))
             axios
-                .get('/api/posts/')
+                .get('posts/')
                 .then(response => {
                     this.posts = response.data
                 })

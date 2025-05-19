@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
@@ -92,7 +92,7 @@ export default {
             console.log('submitForm', this.query)
 
             axios
-                .post('/api/search/', {
+                .post('search/', {
                     query: this.query
                 })
                 .then(response => {

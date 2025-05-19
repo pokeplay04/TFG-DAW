@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import { useUserStore } from '@/stores/user'
 
 export default {
@@ -111,7 +111,7 @@ export default {
 
         getConversations() {
             axios
-                .get('/api/chat/')
+                .get('chat/')
                 .then(response => {
                     this.conversations = response.data
 
@@ -128,7 +128,7 @@ export default {
 
         getMessages() {
             axios
-                .get(`/api/chat/${this.activeConversation}/`)
+                .get(`chat/${this.activeConversation}/`)
                 .then(response => {
                     this.activeConversation = response.data
                 })
@@ -139,7 +139,7 @@ export default {
 
         submitForm() {
             axios
-                .post(`/api/chat/${this.activeConversation.id}/send/`, {
+                .post(`chat/${this.activeConversation.id}/send/`, {
                     body: this.body
                 })
                 .then(response => {

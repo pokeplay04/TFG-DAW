@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 
 export default {
     name: 'notifications',
@@ -52,7 +52,7 @@ export default {
     methods: {
         getNotifications() {
             axios
-                .get('/api/notifications/')
+                .get('notifications/')
                 .then(response => {
                     this.notifications = response.data
                 })
@@ -63,7 +63,7 @@ export default {
 
         async readNotification(notification) {
             await axios
-                .post(`/api/notifications/read/${notification.id}/`)
+                .post(`notifications/read/${notification.id}/`)
                 .then(response => {
                     if (notification.type_of_notification === 'post_like' || notification.type_of_notification === 'post_comment') {
                         this.$router.push({ name: 'postview', params: { id: notification.post_id } })

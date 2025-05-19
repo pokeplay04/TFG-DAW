@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
@@ -69,7 +69,7 @@ export default {
     methods: {
         getPost() {
             axios
-                .get(`/api/posts/${this.$route.params.id}/`)
+                .get(`posts/${this.$route.params.id}/`)
                 .then(response => {
                     this.post = response.data.post
                 })
@@ -80,7 +80,7 @@ export default {
 
         submitForm() {
             axios
-                .post(`/api/posts/${this.$route.params.id}/comment/`, {
+                .post(`posts/${this.$route.params.id}/comment/`, {
                     'body': this.body
                 })
                 .then(response => {

@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 
 import { useToastStore } from '@/stores/toast'
 import { useUserStore } from '@/stores/user'
@@ -104,7 +104,7 @@ export default {
                 formData.append('email', this.form.email)
 
                 axios
-                    .post('/api/editprofile/', formData, {
+                    .post('editprofile/', formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         }

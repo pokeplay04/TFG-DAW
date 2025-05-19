@@ -11,7 +11,7 @@
 
       <!-- Lado derecho -->
       <div class="col-md-6 bg-white d-flex flex-column justify-content-center p-5 text-center">
-        <h3 class="mb-4">¿Ya tienes una cuenta?</h3>
+        <h3 class="mb-4 text-black">¿Ya tienes una cuenta?</h3>
         <button @click="goToExternalLogin" class="btn w-100 text-white" style="background-color: #15CE00;">
           Iniciar sesión
         </button>
@@ -21,7 +21,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+import axios from "@/utils/axios"
 import { useUserStore } from '@/stores/user'
 
 export default {
@@ -50,12 +50,25 @@ export default {
         avatar,
       });
 
-      // ✅ Limpia la URL
+      // 💥 Aquí configuras Axios con el token recién recibido
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+
+      // Limpias la URL para que no se queden los tokens
       window.history.replaceState({}, document.title, "/signup");
 
-      // ✅ Redirige al feed
+      // Guardas en localStorage por si se recarga la página
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+
+      // Rediriges al feed
       this.$router.push("/feed");
     }
+
+      // Si no hay token, lo quitas de localStorage
+      if (!access) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+      }
   },
   methods: {
     goToExternalLogin() {
