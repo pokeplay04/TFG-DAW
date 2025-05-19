@@ -29,7 +29,7 @@
 | Axios        | Peticiones HTTP entre frontend y backend  |
 | Django + DRF | Backend estructurado y API REST           |
 | Spotipy      | Integración con Spotify API               |
-| PostgreSQL   | Base de datos                  |
+| SQLite3   | Base de datos                  |
 | Bootstrap + CSS | Estilos personalizados, responsive     |
 
 ---
