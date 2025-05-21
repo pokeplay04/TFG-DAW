@@ -8,23 +8,23 @@ from django.utils import timezone
 # class CustomUserManager(UserManager):
 
 class SpotifyUserManager(BaseUserManager):
-    def create_user(self, spotify_id, email, display_name, **extra_fields):
-        if not spotify_id:
+    def create_user(self, id, email, display_name, **extra_fields):
+        if not id:
             raise ValueError('El usuario debe tener un ID de Spotify')
         email = self.normalize_email(email)
-        user = self.model(spotify_id=spotify_id, email=email, display_name=display_name, **extra_fields)
+        user = self.model(id=id, email=email, display_name=display_name, **extra_fields)
         user.set_unusable_password() #Sin contraseña porque se autentica con Spotify
         user.save(using=self._db)
         return user
     
-    def create_superuser(self, spotify_id, email, display_name, **extra_fields):
+    def create_superuser(self, id, email, display_name, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(spotify_id, email, display_name, **extra_fields)
+        return self.create_user(id, email, display_name, **extra_fields)
 
 
 class SpotifyUser(AbstractBaseUser, PermissionsMixin):
-    spotify_id = models.CharField(max_length=255, unique=True)
+    id  = models.CharField(primary_key=True, max_length=255, unique=True)
     email = models.EmailField(unique=True)
     display_name = models.CharField(max_length=255)
     access_token = models.TextField()
@@ -47,7 +47,7 @@ class SpotifyUser(AbstractBaseUser, PermissionsMixin):
 
     objects = SpotifyUserManager()
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['spotify_id']
+    REQUIRED_FIELDS = ['id']
 
 
     def __str__(self):

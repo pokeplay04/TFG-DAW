@@ -54,7 +54,7 @@ def spotify_callback(request):
     token_response = requests.post('https://accounts.spotify.com/api/token', data=payload)
 
     if token_response.status_code != 200:
-        # 👇 Mostrar el error devuelto por Spotify (suele estar en texto plano o HTML si es fallo grave)
+        # Mostrar el error devuelto por Spotify
         error_message = token_response.text
         print("❌ Error al obtener token de Spotify:")
         print("Status code:", token_response.status_code)
@@ -95,7 +95,7 @@ def spotify_callback(request):
     
     user_profile = user_profile_response.json()
 
-    spotify_id = user_profile['id']
+    id = user_profile['id']
     email = user_profile['email']
     display_name = remove_non_ascii(user_profile['display_name'])
 
@@ -112,7 +112,7 @@ def spotify_callback(request):
 
     # Crear o actualizar el usuario
     user, created = SpotifyUser.objects.update_or_create(
-        spotify_id=spotify_id,
+        id=id,
         defaults={
             'email': email,
             'display_name': display_name,
@@ -128,12 +128,12 @@ def spotify_callback(request):
 
     login(request, user)
 
-    # 🔑 Generar JWT con SimpleJWT
+    # Generar JWT con SimpleJWT
     tokens = get_tokens_for_user(user)
     access_jwt = tokens['access']
     refresh_jwt = tokens['refresh']
 
-    # ✅ Redirigir al frontend con los datos codificados en la URL
+    # Redirigir al frontend con los datos codificados en la URL
     params = {
         'access': access_jwt,
         'refresh': refresh_jwt,

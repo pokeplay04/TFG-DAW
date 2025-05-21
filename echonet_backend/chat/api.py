@@ -33,8 +33,8 @@ def conversation_detail(request, pk):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def conversation_get_or_create(request, user_pk):
-    user = SpotifyUser.objects.get(pk=user_pk)
+def conversation_get_or_create(request, spotifyuser_pk):
+    user = SpotifyUser.objects.get(pk=spotifyuser_pk)
 
     conversations = Conversation.objects.filter(users__in=list([request.user])).filter(users__in=list([user]))
 
