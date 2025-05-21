@@ -90,19 +90,20 @@ def post_create(request):
     attachment = None
     attachment_form = AttachmentForm(request.POST, request.FILES)
 
-    if attachment_form.is_valid():
-        attachment = attachment_form.save(commit=False)
-        attachment.created_by = request.user
-        attachment.save()
-
     if form.is_valid():
+        # se crea el post
         post = form.save(commit=False)
         post.created_by = request.user
         post.save()
 
-        if attachment:
-            post.attachments.add(attachment)
+        # se crea el attachment independientemente del post
+        if attachment_form.is_valid():
+            attachment = attachment_form.save(commit=False)
+            attachment.created_by = request.user
+            attachment.post = post
+            attachment.save()
 
+        # se suma al user un post
         user = request.user
         user.posts_count = user.posts_count + 1
         user.save()
@@ -112,7 +113,8 @@ def post_create(request):
         return JsonResponse(serializer.data, safe=False)
     else:
         return JsonResponse({'error': 'add somehting here later!...'})
-    
+
+
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
@@ -121,10 +123,10 @@ def post_like(request, pk):
     post = Post.objects.get(pk=pk)
 
     if not Like.objects.filter(post=post, created_by=request.user).exists():
-        Like.objects.create(post=post, created_by=request.user)
+        like = Like.objects.create(post=post, created_by=request.user)
         post.likes_count = post.likes_count + 1
         post.save()
-
+        like.save()
         create_notification(request, 'post_like', post_id=post.id)
 
         return JsonResponse({'message': 'like created'})
