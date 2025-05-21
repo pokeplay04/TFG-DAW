@@ -9,6 +9,7 @@ from account.models import SpotifyUser
 
 class Like(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post = models.ForeignKey('Post', related_name='likes', on_delete=models.CASCADE)
     created_by = models.ForeignKey(SpotifyUser, related_name='likes', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -16,6 +17,7 @@ class Like(models.Model):
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     body = models.TextField(blank=True, null=True)
+    post = models.ForeignKey('Post', related_name='comments', on_delete=models.CASCADE)
     created_by = models.ForeignKey(SpotifyUser, related_name='comments', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -29,6 +31,7 @@ class Comment(models.Model):
 class PostAttachment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     image = models.ImageField(upload_to='post_attachments')
+    post = models.ForeignKey('Post', related_name='attachments', on_delete=models.CASCADE)
     created_by = models.ForeignKey(SpotifyUser, related_name='post_attachments', on_delete=models.CASCADE)
 
     def get_image(self):
@@ -42,14 +45,10 @@ class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     body = models.TextField(blank=True, null=True)
 
-    attachments = models.ManyToManyField(PostAttachment, blank=True)
-
     is_private = models.BooleanField(default=False)
 
-    likes = models.ManyToManyField(Like, blank=True)
     likes_count = models.IntegerField(default=0)
 
-    comments = models.ManyToManyField(Comment, blank=True)
     comments_count = models.IntegerField(default=0)
 
     reported_by_users = models.ManyToManyField(SpotifyUser, blank=True)

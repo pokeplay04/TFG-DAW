@@ -54,9 +54,9 @@ def post_detail(request, pk):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def post_list_profile(request, id):   
-    user = SpotifyUser.objects.get(pk=id)
-    posts = Post.objects.filter(created_by_id=id)
+def post_list_profile(request, spotifyuser_pk):   
+    user = SpotifyUser.objects.get(pk=spotifyuser_pk)
+    posts = Post.objects.filter(created_by_id=spotifyuser_pk)
 
     if not request.user in user.friends.all():
         posts = posts.filter(is_private=False)
@@ -120,15 +120,12 @@ def post_create(request):
 def post_like(request, pk):
     post = Post.objects.get(pk=pk)
 
-    if not post.likes.filter(created_by=request.user):
-        like = Like.objects.create(created_by=request.user)
-
-        post = Post.objects.get(pk=pk)
+    if not Like.objects.filter(post=post, created_by=request.user).exists():
+        Like.objects.create(post=post, created_by=request.user)
         post.likes_count = post.likes_count + 1
-        post.likes.add(like)
         post.save()
 
-        notification = create_notification(request, 'post_like', post_id=post.id)
+        create_notification(request, 'post_like', post_id=post.id)
 
         return JsonResponse({'message': 'like created'})
     else:
