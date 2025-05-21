@@ -50,7 +50,7 @@ export default {
         avatar,
       });
 
-      // 💥 Aquí configuras Axios con el token recién recibido
+      // Aquí configuras Axios con el token recién recibido
       axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
 
       // Limpias la URL para que no se queden los tokens

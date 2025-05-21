@@ -6,7 +6,7 @@
                 <div class="bg-white border rounded p-4 text-center">
                     <img :src="user.get_avatar" class="mb-6 rounded-circle">
                     
-                    <p><strong>{{ user.name }}</strong></p>
+                    <p><strong>{{ user.display_name }}</strong></p>
 
                     <div class="mt-6 d-flex justify-content-around">
                         <RouterLink :to="{name: 'friends', params: {id: user.id}}" class="text-muted">{{ user.friends_count }} friends</RouterLink>
