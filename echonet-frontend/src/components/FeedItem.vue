@@ -4,7 +4,7 @@
       <img :src="post.created_by.get_avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
       <p class="mb-0">
         <strong>
-          <RouterLink :to="{ name: 'profile', params: { id: post.created_by.id } }">{{ post.created_by.name }}</RouterLink>
+          <RouterLink :to="{ name: 'profile', params: { id: post.created_by.id } }">{{ post.created_by.display_name }}</RouterLink>
         </strong>
       </p>
     </div>
