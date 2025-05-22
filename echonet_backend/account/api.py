@@ -62,11 +62,15 @@ def my_friendship_suggestions(request):
 @permission_classes([IsAuthenticated])
 def editprofile(request):
     user = request.user
+    print("User:", user)
 
     form = ProfileForm(request.POST, request.FILES, instance=user)
+    print("Form data:", request.POST, request.FILES) 
 
     if form.is_valid():
         form.save()
+    else:
+        print("Form not valid:", form.errors)
         
     serializer = SpotifyUserSerializer(user)
 
@@ -85,7 +89,7 @@ def send_friendship_request(request, pk):
     if not check1 or not check2:
         friendrequest = FriendshipRequest.objects.create(created_for=user, created_by=request.user)
 
-        notification = create_notification(request, 'new_friendrequest', friendrequest_id=friendrequest.id)
+        create_notification(request, 'new_friendrequest', friendrequest_id=friendrequest.id)
 
         return JsonResponse({'message': 'friendship request created'})
     else:
@@ -109,6 +113,6 @@ def handle_request(request, pk, status):
     request_user.friends_count = request_user.friends_count + 1
     request_user.save()
 
-    notification = create_notification(request, 'accepted_friendrequest', friendrequest_id=friendship_request.id)
+    create_notification(request, 'accepted_friendrequest', friendrequest_id=friendship_request.id)
 
     return JsonResponse({'message': 'friendship request updated'})

@@ -10,25 +10,25 @@ def create_notification(request, type_of_notification, post_id=None, friendreque
     created_for = None
 
     if type_of_notification == 'post_like':
-        body = f'{request.user.name} liked one of your posts!'
+        body = f'{request.user.display_name} liked one of your posts!'
         post = Post.objects.get(pk=post_id)
         created_for = post.created_by
     elif type_of_notification == 'post_comment':
-        body = f'{request.user.name} commented on one of your posts!'
+        body = f'{request.user.display_name} commented on one of your posts!'
         post = Post.objects.get(pk=post_id)
         created_for = post.created_by
     elif type_of_notification == 'new_friendrequest':
         friendrequest = FriendshipRequest.objects.get(pk=friendrequest_id)
         created_for = friendrequest.created_for
-        body = f'{request.user.name} sent you a friend request!'
+        body = f'{request.user.display_name} sent you a friend request!'
     elif type_of_notification == 'accepted_friendrequest':
         friendrequest = FriendshipRequest.objects.get(pk=friendrequest_id)
         created_for = friendrequest.created_for
-        body = f'{request.user.name} accepted your friend request!'
+        body = f'{request.user.display_name} accepted your friend request!'
     elif type_of_notification == 'rejected_friendrequest':
         friendrequest = FriendshipRequest.objects.get(pk=friendrequest_id)
         created_for = friendrequest.created_for
-        body = f'{request.user.name} rejected your friend request!'
+        body = f'{request.user.display_name} rejected your friend request!'
 
     notification = Notification.objects.create(
         body=body,
