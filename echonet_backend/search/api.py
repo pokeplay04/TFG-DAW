@@ -22,7 +22,7 @@ def search(request):
     for user in request.user.friends.all():
         user_ids.append(user.id)
 
-    users = SpotifyUser.objects.filter(name__icontains=query)
+    users = SpotifyUser.objects.filter(display_name__icontains=query)
     users_serializer = SpotifyUserSerializer(users, many=True)
 
     posts = Post.objects.filter(

@@ -123,8 +123,11 @@ def post_like(request, pk):
     post = Post.objects.get(pk=pk)
 
     if not Like.objects.filter(post=post, created_by=request.user).exists():
+        # se crea el like
         like = Like.objects.create(post=post, created_by=request.user)
+        # se suma el like al post
         post.likes_count = post.likes_count + 1
+        # se guardan
         post.save()
         like.save()
         create_notification(request, 'post_like', post_id=post.id)
@@ -138,14 +141,16 @@ def post_like(request, pk):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def post_create_comment(request, pk):
-    comment = Comment.objects.create(body=request.data.get('body'), created_by=request.user)
-
     post = Post.objects.get(pk=pk)
-    post.comments.add(comment)
+
+    # se crea el comentario 
+    comment = Comment.objects.create(body=request.data.get('body'), created_by=request.user, post=post)
+
+    # se suma el comentario al post
     post.comments_count = post.comments_count + 1
     post.save()
 
-    notification = create_notification(request, 'post_comment', post_id=post.id)
+    create_notification(request, 'post_comment', post_id=post.id)
 
     serializer = CommentSerializer(comment)
 
@@ -159,6 +164,10 @@ def post_delete(request, pk):
     post = Post.objects.filter(created_by=request.user).get(pk=pk)
     post.delete()
 
+    # se resta al user un post
+    user = request.user
+    user.posts_count = user.posts_count - 1
+    user.save()
     return JsonResponse({'message': 'post deleted'})
 
 
@@ -169,6 +178,7 @@ def post_report(request, pk):
     post = Post.objects.get(pk=pk)
     post.reported_by_users.add(request.user)
     post.save()
+
 
     return JsonResponse({'message': 'post reported'})
 
