@@ -20,19 +20,12 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
     }
 
-
-
-CLIENT_ID = '78cc48f673894cf1b8a45ecc5ff98c16'
-CLIENT_SECRET = '45acdd37e4bd4ae7809dd821717df2df'
-REDIRECT_URI = 'http://127.0.0.1:8000/api/spotify/callback'
-FRONTEND_URL = 'http://localhost:5173/signup'
-
 def spotify_login(request):
     scope = 'user-read-email user-read-private'
     query = {
-        'client_id': CLIENT_ID,
+        'client_id': settings.SPOTIFY_CLIENT_ID,
         'response_type': 'code',
-        'redirect_uri': REDIRECT_URI,
+        'redirect_uri': settings.REDIRECT_URI,
         'scope': scope,
     }
     url = 'https://accounts.spotify.com/authorize?' + urllib.parse.urlencode(query)
@@ -46,9 +39,9 @@ def spotify_callback(request):
     payload = {
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': REDIRECT_URI,
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
+        'redirect_uri': settings.REDIRECT_URI,
+        'client_id': settings.SPOTIFY_CLIENT_ID,
+        'client_secret': settings.SPOTIFY_CLIENT_SECRET,
     }
 
     token_response = requests.post('https://accounts.spotify.com/api/token', data=payload)
@@ -115,15 +108,19 @@ def spotify_callback(request):
         id=id,
         defaults={
             'email': email,
-            'display_name': display_name,
             'access_token': access_token,
             'refresh_token': refresh_token,
             'token_expires': token_expires
         }
     )
 
+    # Si el usuario es nuevo, establecer avatar y nombre
     if created and avatar_file:
         user.avatar.save(avatar_file.name, avatar_file)
+        user.save()
+        
+    if created and display_name:
+        user.display_name = display_name
         user.save()
 
     login(request, user)
@@ -143,7 +140,7 @@ def spotify_callback(request):
         'avatar': user.avatar.url if user.avatar else '',
     }
 
-    redirect_url = f"{FRONTEND_URL}?{urlencode(params)}"
+    redirect_url = f"{settings.FRONTEND_URL}?{urlencode(params)}"
     return HttpResponseRedirect(redirect_url)
 
 def remove_non_ascii(text):

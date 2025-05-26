@@ -30,4 +30,11 @@ for user in users:
             if friendsfriend not in user.friends.all() and friendsfriend != user:
                 user.people_you_may_know.add(friendsfriend)
     
+# si el array people_you_may_know no tiene elementos, añadimos usuarios que no sean amigos del usuario loggeado
+    if not user.people_you_may_know.exists():
+        print('No suggestions found, adding random users')
+        random_users = SpotifyUser.objects.exclude(friends__in=[user]).exclude(id=user.id).order_by('?')[:5]
+        for random_user in random_users:
+            user.people_you_may_know.add(random_user)
+    
     print()
