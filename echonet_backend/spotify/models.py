@@ -38,20 +38,20 @@ class User_fav_artists(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(SpotifyUser, related_name='user_fav_artists', on_delete=models.CASCADE)
 
-# Post music attachment (embed)
-class Post_music_attachment(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    post =  models.ForeignKey(Post, related_name='post_music_attachments', on_delete=models.CASCADE)
-    track_id = models.CharField(max_length=255, blank=True, null=True)
-    embed_html = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey(SpotifyUser, related_name='post_music_attachments', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+# Post music attachment (embed) -----------------------DEBERIA ESTAR EN POST MODELS
+# class Post_music_attachment(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     post =  models.ForeignKey(Post, related_name='post_music_attachments', on_delete=models.CASCADE)
+#     track_id = models.CharField(max_length=255, blank=True, null=True)
+#     embed_html = models.TextField(blank=True, null=True)
+#     created_by = models.ForeignKey(SpotifyUser, related_name='post_music_attachments', on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-# Chat music attachment (embed)
-class Chat_music_attachment(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    conversation = models.ForeignKey(Conversation, related_name='chat_music_attachments', on_delete=models.CASCADE)
-    track_id = models.CharField(max_length=255, blank=True, null=True)
-    embed_html = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey(SpotifyUser, related_name='chat_music_attachments', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+# # Chat music attachment (embed) -----------------------DEBERIA ESTAR EN CHAT MODELS
+# class Chat_music_attachment(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     conversation = models.ForeignKey(Conversation, related_name='chat_music_attachments', on_delete=models.CASCADE)
+#     track_id = models.CharField(max_length=255, blank=True, null=True)
+#     embed_html = models.TextField(blank=True, null=True)
+#     created_by = models.ForeignKey(SpotifyUser, related_name='chat_music_attachments', on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)

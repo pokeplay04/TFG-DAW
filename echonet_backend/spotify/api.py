@@ -130,6 +130,8 @@ def get_now_playing(request):
 
 
 # Endpoint para obtener los top items de un usuario especificando type y time_range
+#  - Para seccion Descubrir musica
+#  - Para compartir top items en perfil
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
