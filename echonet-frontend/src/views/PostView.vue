@@ -17,10 +17,10 @@
                 <div class="bg-white border rounded">
                     <form @submit.prevent="submitForm" method="post">
                         <div class="p-3">
-                            <textarea v-model="body" class="form-control" rows="4" placeholder="What do you think?"></textarea>
+                            <textarea v-model="body" class="form-control" rows="4" placeholder="Que es lo que estás pensando?"></textarea>
                         </div>
                         <div class="p-3 border-top">
-                            <button type="submit" class="btn btn-primary">Comment</button>
+                            <button type="submit" class="btn btn-primary">Comentar</button>
                         </div>
                     </form>
                 </div>

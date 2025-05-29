@@ -1,15 +1,13 @@
 <template>
     <div class="container text-black">
         <div class="row">
-            <!-- Left Section (Profile Info) -->
             <div class="col-lg-3">
                 <div class="bg-white border rounded p-4 text-center">
-                    <img :src="user.get_avatar" class="mb-6 rounded-circle">
-                    
+                    <img :src="user.get_avatar" class="mb-3 rounded-circle mx-auto" style="width: 200px; height: 200px; object-fit: cover;">
                     <p><strong>{{ user.display_name }}</strong></p>
 
                     <div class="mt-6 d-flex justify-content-around">
-                        <RouterLink :to="{name: 'friends', params: {id: user.id}}" class="text-muted">{{ user.friends_count }} friends</RouterLink>
+                        <RouterLink :to="{name: 'friends', params: {id: user.id}}" class="text-muted">{{ user.friends_count }} amigos</RouterLink>
                         <p class="text-muted">{{ user.posts_count }} posts</p>
                     </div>
 
@@ -18,16 +16,16 @@
                             class="btn btn-purple btn-sm w-100 mb-2" 
                             @click="sendFriendshipRequest"
                             v-if="userStore.user.id !== user.id && can_send_friendship_request"
-                        >
-                            Send friendship request
+                        >   
+                            Enviar solicitud de amistad
                         </button>
-
+                        
                         <button 
                             class="btn btn-purple btn-sm w-100 mb-2" 
                             @click="sendDirectMessage"
                             v-if="userStore.user.id !== user.id"
                         >
-                            Send direct message
+                            Enviar mensaje
                         </button>
 
                         <RouterLink 
@@ -35,7 +33,7 @@
                             to="/profile/edit"
                             v-if="userStore.user.id === user.id"
                         >
-                            Edit profile
+                            Editar perfil
                         </RouterLink>
 
                         <button 
@@ -43,13 +41,12 @@
                             @click="logout"
                             v-if="userStore.user.id === user.id"
                         >
-                            Log out
+                            Cerrar sesión
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Center Section (Feed) -->
             <div class="col-lg-6">
                 <div 
                     class="bg-white border rounded p-4 mb-4"
@@ -70,7 +67,6 @@
                 </div>
             </div>
 
-            <!-- Right Section (Suggested People & Trends) -->
             <div class="col-lg-3">
                 <PeopleYouMayKnow />
 
@@ -173,9 +169,9 @@ export default {
                     this.can_send_friendship_request = false
 
                     if (response.data.message === 'request already sent') {
-                        this.toastStore.showToast(5000, 'The request has already been sent!', 'bg-warning')
+                        this.toastStore.showToast(5000, '¡La solicitud ya ha sido enviada!', 'bg-warning')
                     } else {
-                        this.toastStore.showToast(5000, 'The request was sent!', 'bg-success')
+                        this.toastStore.showToast(5000, '¡La solicitud ha sido enviada!', 'bg-success')
                     }
                 })
                 .catch(error => {

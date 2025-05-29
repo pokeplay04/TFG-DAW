@@ -23,6 +23,9 @@
 
             <!-- Sidebar (1/4 columns) -->
             <div class="col-lg-3">
+                <div>
+                    <SongList search_type="album" />
+                </div>
                 <div class="mb-3">
                     <PeopleYouMayKnow />
                 </div>
@@ -40,6 +43,7 @@ import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
 import FeedForm from '../components/FeedForm.vue'
+import SongList from '../components/SongList.vue'
 
 export default {
     name: 'FeedView',
@@ -48,7 +52,8 @@ export default {
         PeopleYouMayKnow,
         Trends,
         FeedItem,
-        FeedForm
+        FeedForm,
+        SongList
     },
 
     data() {
@@ -64,8 +69,6 @@ export default {
 
     methods: {
         getFeed() {
-            console.log('localStorage:', localStorage.getItem('access_token'))
-            console.log('localStorage:', localStorage.getItem('refresh_token'))
             axios
                 .get('posts/')
                 .then(response => {

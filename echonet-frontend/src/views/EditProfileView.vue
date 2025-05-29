@@ -4,9 +4,8 @@
             <!-- Left Section -->
             <div class="col-lg-6">
                 <div class="bg-white border rounded p-5">
-                    <h1 class="mb-4 h4">Edit profile</h1>
+                    <h1 class="mb-4 h4">Editar perfil</h1>
                     <p class="text-muted mb-4"></p>
-                    <RouterLink to="/profile/edit/password" class="text-decoration-underline">Edit password</RouterLink>
                 </div>
             </div>
 
@@ -15,22 +14,12 @@
                 <div class="bg-white border rounded p-5">
                     <form @submit.prevent="submitForm">
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">Nombre</label>
                             <input
                                 type="text"
                                 v-model="form.name"
                                 class="form-control"
                                 placeholder="Your full name"
-                            />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">E-mail</label>
-                            <input
-                                type="email"
-                                v-model="form.email"
-                                class="form-control"
-                                placeholder="Your e-mail address"
                             />
                         </div>
 
@@ -49,7 +38,7 @@
                         </div>
 
                         <div>
-                            <button class="btn btn-primary">Save changes</button>
+                            <button class="btn btn-primary">Guardar cambios</button>
                         </div>
                     </form>
                 </div>
@@ -78,7 +67,6 @@ export default {
     data() {
         return {
             form: {
-                email: this.userStore.user.email,
                 name: this.userStore.user.name
             },
             errors: [],
@@ -89,19 +77,15 @@ export default {
         submitForm() {
             this.errors = []
 
-            if (this.form.email === '') {
-                this.errors.push('Your e-mail is missing')
-            }
 
             if (this.form.name === '') {
-                this.errors.push('Your name is missing')
+                this.errors.push('Falta el nombre')
             }
 
             if (this.errors.length === 0) {
                 const formData = new FormData()
                 formData.append('avatar', this.$refs.file?.files[0])
-                formData.append('name', this.form.name)
-                formData.append('email', this.form.email)
+                formData.append('display_name', this.form.name)
 
                 axios
                     .post('editprofile/', formData, {
@@ -111,18 +95,17 @@ export default {
                     })
                     .then(response => {
                         if (response.data.message === 'information updated') {
-                            this.toastStore.showToast(5000, 'The information was saved', 'bg-success')
+                            this.toastStore.showToast(5000, 'La información ha sido guardada', 'bg-success')
 
                             this.userStore.setUserInfo({
                                 id: this.userStore.user.id,
                                 name: this.form.name,
-                                email: this.form.email,
                                 avatar: response.data.user.get_avatar
                             })
 
-                            this.$router.back()
+                            // this.$router.back()
                         } else {
-                            this.toastStore.showToast(5000, `${response.data.message}. Please try again`, 'bg-danger')
+                            this.toastStore.showToast(5000, `${response.data.message}. Por favor, inténtalo de nuevo`, 'bg-danger')
                         }
                     })
                     .catch(error => {

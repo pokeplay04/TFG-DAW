@@ -26,7 +26,7 @@
           v-else
           style="background-color: #290642; color: white; border-color: #B346DB;"
         >
-          ¡No tienes ninguna notificación sin leer!
+          ¡No tienes ninguna notificación por leer!
         </div>
       </div>
     </div>
