@@ -9,7 +9,7 @@ from account.models import SpotifyUser, FriendshipRequest
 from account.serializers import SpotifyUserSerializer
 from notification.utils import create_notification
 
-from .forms import PostForm, AttachmentForm
+from .forms import PostForm, AttachmentForm, MusicAttachmentForm
 from .models import Post, Like, Comment, Trend
 from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer, TrendSerializer
 
@@ -88,7 +88,9 @@ def post_list_profile(request, spotifyuser_pk):
 def post_create(request):
     form = PostForm(request.POST)
     attachment = None
+    music_attachment = None
     attachment_form = AttachmentForm(request.POST, request.FILES)
+    music_attachment_form = MusicAttachmentForm(request.POST)
 
     if form.is_valid():
         # se crea el post
@@ -103,6 +105,14 @@ def post_create(request):
             attachment.post = post
             attachment.save()
 
+        # se crea el music attachment independientemente del post
+        if music_attachment_form.is_valid():
+            music_attachment = music_attachment_form.save(commit=False)
+            music_attachment.created_by = request.user
+            music_attachment.post = post
+            music_attachment.save()
+
+        
         # se suma al user un post
         user = request.user
         user.posts_count = user.posts_count + 1
@@ -130,11 +140,20 @@ def post_like(request, pk):
         # se guardan
         post.save()
         like.save()
+
         create_notification(request, 'post_like', post_id=post.id)
 
         return JsonResponse({'message': 'like created'})
     else:
-        return JsonResponse({'message': 'post already liked'})
+        # se elimina el like
+        like = Like.objects.get(post=post, created_by=request.user)
+        like.delete()
+        # se resta el like al post
+        post.likes_count = post.likes_count - 1
+        # se guardan
+        post.save()
+        # create_notification(request, 'post_like', post_id=post.id)
+        return JsonResponse({'message': 'like deleted'})
 
 
 @api_view(['POST'])

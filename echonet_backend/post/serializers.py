@@ -10,14 +10,19 @@ class PostAttachmentSerializer(serializers.ModelSerializer):
         model = PostAttachment
         fields = ('id', 'get_image',)
 
+class PostMusicAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostAttachment
+        fields = ('id', 'track_id',)
 
 class PostSerializer(serializers.ModelSerializer):
     created_by = SpotifyUserSerializer(read_only=True)
     attachments = PostAttachmentSerializer(read_only=True, many=True)
+    music_attachments = PostMusicAttachmentSerializer(read_only=True, many=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'body', 'is_private', 'likes_count', 'comments_count', 'created_by', 'created_at_formatted', 'attachments') #
+        fields = ('id', 'body', 'is_private', 'likes_count', 'comments_count', 'created_by', 'created_at_formatted', 'attachments', 'music_attachments') #
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -33,10 +38,12 @@ class PostDetailSerializer(serializers.ModelSerializer):
     created_by = SpotifyUserSerializer(read_only=True)
     comments = CommentSerializer(read_only=True, many=True)
     attachments = PostAttachmentSerializer(read_only=True, many=True)
+    music_attachments = PostMusicAttachmentSerializer(read_only=True, many=True)
+
 
     class Meta:
         model = Post
-        fields = ('id', 'body', 'likes_count', 'comments_count', 'created_by', 'created_at_formatted', 'comments', 'attachments',)
+        fields = ('id', 'body', 'likes_count', 'comments_count', 'created_by', 'created_at_formatted', 'comments', 'attachments', 'music_attachments')
 
 
 class TrendSerializer(serializers.ModelSerializer):

@@ -3,12 +3,11 @@ from .models import Notification
 from post.models import Post
 from account.models import FriendshipRequest
 
-# create_notification(request, 'post_like', 'lskjf-j12l3-jlas-jdfa', 'lskjf-j12l3-jlas-jdfa')
-
-
 def create_notification(request, type_of_notification, post_id=None, friendrequest_id=None):
     created_for = None
 
+
+    # Si la notificación es de tipo 'post_like' o 'post_comment', obtenemos el post y su creador
     if type_of_notification == 'post_like':
         body = f'{request.user.display_name} liked one of your posts!'
         post = Post.objects.get(pk=post_id)
@@ -30,6 +29,10 @@ def create_notification(request, type_of_notification, post_id=None, friendreque
         created_for = friendrequest.created_for
         body = f'{request.user.display_name} rejected your friend request!'
 
+    # Si el creador de la notificación es el mismo que el usuario que la creó, no la guardamos
+    if created_for == request.user:
+        return None
+    
     notification = Notification.objects.create(
         body=body,
         type_of_notification=type_of_notification,

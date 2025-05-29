@@ -39,6 +39,13 @@ class PostAttachment(models.Model):
             return settings.WEBSITE_URL + self.image.url
         else:
             return ''
+        
+class PostMusicAttachment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post =  models.ForeignKey('Post', related_name='post_music_attachments', on_delete=models.CASCADE)
+    track_id = models.CharField(max_length=255, blank=True, null=True)
+    created_by = models.ForeignKey(SpotifyUser, related_name='post_music_attachments', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Post(models.Model):
