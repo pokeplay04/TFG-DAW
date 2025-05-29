@@ -4,10 +4,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-v*=4ctfyl&pe37%c8rs7oa4hoj3h_4w--q9nxw1j=ebd%91865'
 
@@ -17,8 +13,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 WEBSITE_URL = 'http://127.0.0.1:8000'
-
-
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -35,8 +29,16 @@ SESSION_COOKIE_SECURE = False  # True si usas HTTPS
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SECURE = False
 
-# Application definition
+# VALORES DE SPOTIFY
+SPOTIFY_CLIENT_ID = '78cc48f673894cf1b8a45ecc5ff98c16'
+SPOTIFY_CLIENT_SECRET = '45acdd37e4bd4ae7809dd821717df2df'
+REDIRECT_URI = 'http://127.0.0.1:8000/api/spotify/callback'
+FRONTEND_URL = 'http://localhost:5173/signup'
 
+
+
+
+# Application definition
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 AUTH_USER_MODEL = 'account.SpotifyUser'
@@ -69,6 +71,7 @@ INSTALLED_APPS = [
     'notification',
     'post',
     'search',
+    'spotify',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',

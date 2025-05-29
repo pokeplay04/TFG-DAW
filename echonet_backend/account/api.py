@@ -101,18 +101,28 @@ def send_friendship_request(request, pk):
 @permission_classes([IsAuthenticated])
 def handle_request(request, pk, status):
     user = SpotifyUser.objects.get(pk=pk)
-    friendship_request = FriendshipRequest.objects.filter(created_for=request.user).get(created_by=user)
-    friendship_request.status = status
-    friendship_request.save()
+    try:
+        friendship_request = FriendshipRequest.objects.filter(created_for=request.user).get(created_by=user)
+    except FriendshipRequest.DoesNotExist:
+        return JsonResponse({'message': 'friendship request not found'}, status=404)
 
-    user.friends.add(request.user)
-    user.friends_count = user.friends_count + 1
-    user.save()
+    if status == 'accepted':
+        friendship_request.status = status
+        friendship_request.save()
 
-    request_user = request.user
-    request_user.friends_count = request_user.friends_count + 1
-    request_user.save()
+        user.friends.add(request.user)
+        user.friends_count += 1
+        user.save()
 
-    create_notification(request, 'accepted_friendrequest', friendrequest_id=friendship_request.id)
+        request_user = request.user
+        request_user.friends_count += 1
+        request_user.save()
 
-    return JsonResponse({'message': 'friendship request updated'})
+        create_notification(request, 'accepted_friendrequest', friendrequest_id=friendship_request.id)
+
+        return JsonResponse({'message': 'friendship request accepted'})
+    elif status == 'rejected':
+        friendship_request.delete()
+        return JsonResponse({'message': 'friendship request rejected and deleted'})
+    else:
+        return JsonResponse({'message': 'invalid status'}, status=400)

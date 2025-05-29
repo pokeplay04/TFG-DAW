@@ -70,3 +70,20 @@ def conversation_send_message(request, pk):
     serializer = ConversationMessageSerializer(conversation_message)
 
     return JsonResponse(serializer.data, safe=False)
+
+# metodo para almacenar la canción en la conversación
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def add_music_to_chat(request, pk):
+    conversation = Conversation.objects.filter(users__in=list([request.user])).get(pk=pk)
+
+    if 'track_id' not in request.data:
+        return JsonResponse({'error': 'track_id is required'}, status=400)
+
+    conversation.track_id = request.data['track_id']
+    conversation.save()
+
+    serializer = ConversationDetailSerializer(conversation)
+
+    return JsonResponse(serializer.data, safe=False)

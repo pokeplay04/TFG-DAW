@@ -10,7 +10,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ('id', 'users', 'modified_at_formatted',)
+        fields = ('id', 'users', 'modified_at_formatted', 'track_id')
 
 
 class ConversationMessageSerializer(serializers.ModelSerializer):
@@ -27,4 +27,4 @@ class ConversationDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ('id', 'users', 'modified_at_formatted', 'messages',)
+        fields = ('id', 'users', 'modified_at_formatted', 'messages', 'track_id')

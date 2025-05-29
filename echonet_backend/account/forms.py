@@ -11,11 +11,9 @@ class ProfileForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
 
-        avatar_file = self.cleaned_data.get('avatar')
-        if avatar_file:
-            cropped = crop_center_square(avatar_file)
-            original_name = avatar_file.name  # ← usa el nombre original del archivo
-            user.avatar.save(original_name, cropped, save=False)
+        if self.cleaned_data.get('avatar'):
+            cropped = crop_center_square(self.cleaned_data['avatar'])
+            user.avatar.save(self.cleaned_data['avatar'].name , cropped, save=False)  # guardamos sin commit
 
         if commit:
             user.save()

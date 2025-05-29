@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/search/', include('search.urls')),
     path('api/chat/', include('chat.urls')),
     path('api/notifications/', include('notification.urls')),
+    path('api/spotify/', include('spotify.urls')),
     # path('activateemail/', activateemail, name='activateemail'),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
