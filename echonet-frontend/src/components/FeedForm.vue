@@ -2,19 +2,19 @@
   <form @submit.prevent="submitForm" method="post" class="card p-4 shadow-sm">
     <!-- Texto del post -->
     <div class="mb-3">
-      <label for="postBody" class="form-label">What are you thinking about?</label>
-      <textarea v-model="body" id="postBody" class="form-control" rows="3" placeholder="Write something..."></textarea>
+      <label for="postBody" class="form-label">En que estás pensando?</label>
+      <textarea v-model="body" id="postBody" class="form-control" rows="3" placeholder="Escribe algo..."></textarea>
     </div>
 
     <!-- Checkbox de privacidad -->
     <div class="form-check mb-3">
       <input class="form-check-input" type="checkbox" v-model="is_private" id="isPrivate">
-      <label class="form-check-label" for="isPrivate">Private</label>
+      <label class="form-check-label" for="isPrivate">Privado</label>
     </div>
 
     <!-- Vista previa de la imagen -->
     <div v-if="url" class="mb-3">
-      <label class="form-label">Image preview:</label><br />
+      <label class="form-label">Preview de la imagen:</label><br />
       <img :src="url" class="rounded img-thumbnail" style="max-width: 150px;" />
     </div>
 
@@ -22,10 +22,12 @@
     <div class="d-flex justify-content-between align-items-center border-top pt-3">
       <div>
         <label class="btn btn-outline-secondary btn-sm">
-          Attach image
+          Adjuntar imagen
           <input type="file" ref="file" @change="onFileChange" hidden />
         </label>
       </div>
+
+      <!--  1. Aquí se debe añadir el buscador (Songlist) que al enviar el formulario (publicar el post) guardará en la base de datos el track_id -->
 
       <!-- Botón de envío -->
       <button type="submit" class="btn btn-success">
@@ -67,9 +69,14 @@ export default {
             } else {
                 this.url = null;
                 this.$refs.file.value = null;
-                alert("Please select a valid image file.");
+                alert("Porfavor seleccione un archivo de imagen válido.");
             }
         },
+
+        // 2. El metodo de arriba hace que al seleccionar un archivo de imagen, se muestre una vista previa de la imagen seleccionada.
+        //    se podria hacer algo parecido con el componente SongList, al seleccionar una canción se muestre una vista previa de la
+        //     canción seleccionada (futuro componente previewTrack) o poner directamente el embed de la canción en el formulario de envio del post
+
 
         submitForm() {
             console.log('submitForm', this.body);
@@ -80,7 +87,7 @@ export default {
             formData.append('is_private', this.is_private);
 
             axios
-                .post('posts/create/', formData, {
+                .post('posts/create/', formData, { // 3. Esta llamada axios (al backend) envia todo y ya en el backend se encarga de guardar la musica en su tabla correspondiente
                     headers: {
                         "Content-Type": "multipart/form-data",
                     }

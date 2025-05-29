@@ -11,6 +11,8 @@
     <p class="text-muted mb-0">{{ post.created_at_formatted }} ago</p>
   </div>
 
+  <p>{{ post.body }}</p>
+  
   <template v-if="post.attachments.length">
     <img
       v-for="image in post.attachments"
@@ -20,112 +22,80 @@
     />
   </template>
 
-  <p>{{ post.body }}</p>
+   <!-- En este componente se deberá comprobar si el post tiene music attachment y si es así se muestra el iframe (de la misma forma que se hace en el chat) -->
+   <!-- Aquí no hace falta buscador ya que esto es un post ya publicado, sólo se muestra lo que ya está subido, igual que con la imagen -->
+   <!-- En este caso el valor de track_id que irá en la url del embed la sacará de la base de datos 
+    de la misma forma que está obteniendo datos como body(linea 14), image(linea 18), etc...   -->
+    <!-- Te recomiendo que te guíes de ChatView pero saltandote toda la parte del buscador SongList ya que aquí no lo usamos -->
+    <!-- Fijate también en el codigo de arriba ya que es parecido lo que hay que hacer ♥ -->
+
 
   <div class="my-4 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-4">
       <div class="d-flex align-items-center gap-2" @click="likePost(post.id)" role="button">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 
-            1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 
-            3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 
-            9-12z"></path>
+        <!-- LIKE -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#39ff65" style="width: 16px; height: 16px;">
+          <path d="M11 11.5v-1a1.5 1.5 0 0 1 3 0v1.5" />
+          <path d="M17 12v-6.5a1.5 1.5 0 0 1 3 0v10.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
+          <path d="M14 10.5a1.5 1.5 0 0 1 3 0v1.5" />
+          <path d="M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5" />
         </svg>
         <span class="text-muted small">{{ post.likes_count }} likes</span>
       </div>
 
       <div class="d-flex align-items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 
-            7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 
-            1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 
-            21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 
-            2.555.337z"></path>
+        <!-- COMMENTS -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#39ff65" style="width: 16px; height: 16px;">
+          <path d="M7 10h10" />
+          <path d="M9 14h5" />
+          <path d="M12.4 3a5.34 5.34 0 0 1 4.906 3.239a5.333 5.333 0 0 1 -1.195 10.6a4.26 4.26 0 0 1 -5.28 1.863l-3.831 2.298v-3.134a2.668 2.668 0 0 1 -1.795 -3.773a4.8 4.8 0 0 1 2.908 -8.933a5.33 5.33 0 0 1 4.287 -2.16" />
         </svg>
         <RouterLink :to="{ name: 'postview', params: { id: post.id } }" class="text-muted small">
-          {{ post.comments_count }} comments
+          {{ post.comments_count }} comentarios
         </RouterLink>
       </div>
 
       <div v-if="post.is_private" class="d-flex align-items-center gap-2 text-muted small">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-          stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 
-            7.244 19.5 12 19.5c.993 0 1.953-.138 
-            2.863-.395M6.228 6.228A10.45 10.45 0 0112 
-            4.5c4.756 0 8.773 3.162 10.065 
-            7.498a10.523 10.523 0 01-4.293 
-            5.774M6.228 6.228L3 3m3.228 3.228l3.65 
-            3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 
-            0a3 3 0 10-4.243-4.243m4.242 
-            4.242L9.88 9.88" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#39ff65" style="width: 16px; height: 16px;">
+          <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" />
+          <path d="M8 11m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v3a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z" />
+          <path d="M10 11v-2a2 2 0 1 1 4 0v2" />
         </svg>
-        <span>Is private</span>
+        <span>Privado</span>
       </div>
     </div>
 
     <div role="button" @click="toggleExtraModal">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-        stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M12 6.75a.75.75 0 110-1.5.75.75 
-          0 010 1.5zM12 12.75a.75.75 0 
-          110-1.5.75.75 0 010 1.5zM12 
-          18.75a.75.75 0 110-1.5.75.75 0 010 
-          1.5z" />
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#39ff65" style="width: 16px; height: 16px;">
+        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
       </svg>
     </div>
   </div>
 
   <div v-if="showExtraModal">
     <div class="d-flex align-items-center gap-4">
-      <div
-        class="d-flex align-items-center gap-2 text-danger small"
-        @click="deletePost"
-        v-if="userStore.user.id === post.created_by.id"
-        role="button"
-      >
+      <div class="d-flex align-items-center gap-2 text-danger small" @click="deletePost" v-if="userStore.user.id === post.created_by.id" role="button">
+        <!-- BORRAR -->
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
           stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 
-            0L9.26 9m9.968-3.21c.342.052.682.107 
-            1.022.166m-1.022-.165L18.16 
-            19.673a2.25 2.25 0 
-            01-2.244 2.077H8.084a2.25 2.25 
-            0 01-2.244-2.077L4.772 
-            5.79m14.456 0a48.108 48.108 0 
-            00-3.478-.397m-12 
-            .562c.34-.059.68-.114 
-            1.022-.165m0 0a48.11 48.11 0 
-            013.478-.397m7.5 
-            0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 
-            51.964 0 00-3.32 
-            0c-1.18.037-2.09 
-            1.022-2.09 
-            2.201v.916m7.5 0a48.667 48.667 0 
-            00-7.5 0" />
+          <path d="M4 7h16" />
+          <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+          <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+          <path d="M10 12l4 4m0 -4l-4 4" />
         </svg>
-        <span>Delete post</span>
+        <span>Borrar post</span>
       </div>
 
+      <!-- REPORTAR -->
       <div class="d-flex align-items-center gap-2 text-warning small" @click="reportPost" role="button">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
           stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M3 3v1.5M3 21v-6m0 
-            0l2.77-.693a9 9 0 
-            016.208.682l.108.054a9 
-            9 0 006.086.71l3.114-.732a48.524 
-            48.524 0 01-.005-10.499l-3.11.732a9 
-            9 0 01-6.085-.711l-.108-.054a9 
-            9 0 00-6.208-.682L3 
-            4.5M3 15V4.5" />
+          <path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9z" />
+          <path d="M5 21v-7" />
         </svg>
-        <span>Report post</span>
+        <span>Reportar post</span>
       </div>
     </div>
   </div>
@@ -167,6 +137,8 @@ export default {
                 .then(response => {
                     if (response.data.message == "like created") {
                         this.post.likes_count += 1;
+                    }else if (response.data.message == "like deleted") {
+                        this.post.likes_count -= 1;
                     }
                 })
                 .catch(error => {
@@ -180,7 +152,7 @@ export default {
                 .then(response => {
                     console.log(response.data)
 
-                    this.toastStore.showToast(5000, 'The post was reported', 'bg-emerald-500')
+                    this.toastStore.showToast(5000, 'El post ha sido reportado', 'bg-emerald-500')
                 })
                 .catch(error => {
                     console.log("error", error);
@@ -195,7 +167,7 @@ export default {
                 .then(response => {
                     console.log(response.data)
 
-                    this.toastStore.showToast(5000, 'The post was deleted', 'bg-emerald-500')
+                    this.toastStore.showToast(5000, 'El post ha sido borrado', 'bg-emerald-500')
                 })
                 .catch(error => {
                     console.log("error", error);

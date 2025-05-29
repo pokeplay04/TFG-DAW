@@ -7,9 +7,15 @@ const store = useToastStore()
 <template>
     <div
         v-if="store.isVisible"
-        class="transition ease-in-out delay-500 duration-500 px-6 py-6 fixed top-full right-8 rounded-xl shadow-xl"
+        class="toast show position-fixed bottom-0 end-0 m-4 text-white"
         :class="store.classes"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        style="z-index: 1055; min-width: 250px;"
     >
-        {{ store.message }}
+        <div class="toast-body">
+            {{ store.message }}
+        </div>
     </div>
 </template>
