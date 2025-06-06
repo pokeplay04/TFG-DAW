@@ -24,7 +24,7 @@
             <!-- Sidebar (1/4 columns) -->
             <div class="col-lg-3">
                 <div>
-                    <SongList search_type="album" />
+                    <SongList search_type="track" />
                 </div>
                 <div class="mb-3">
                     <PeopleYouMayKnow />

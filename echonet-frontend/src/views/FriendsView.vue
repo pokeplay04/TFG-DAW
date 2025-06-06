@@ -5,7 +5,7 @@
                 <div class="text-center bg-white border rounded p-4">
                     <img :src="user.get_avatar" class="rounded-circle mb-3" width="100" height="100">
                     
-                    <p><strong>{{ user.name }}</strong></p>
+                    <p><strong>{{ user.display_name }}</strong></p>
 
                     <div class="mt-3 d-flex justify-content-around">
                         <p class="text-muted small mb-0">{{ user.friends_count }} amigos</p>

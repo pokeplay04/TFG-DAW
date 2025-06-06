@@ -127,17 +127,24 @@ export default {
         }
     },
 
-    mounted() {
-        this.getConversations()
-    },
+mounted() {
+    this.getConversations()
+
+    setInterval(() => {
+        if (this.activeConversation && this.activeConversation.id) {
+            console.log('Fetching messages for conversation:', this.activeConversation)
+            this.getMessages()
+        }
+    }, 1000)
+},
 
     methods: {
         handleTrackSelect(track) { // Método para manejar la selección de una canción desde el componente SongList
-            this.selectedTrack = track.id // Establecer el id de la canción seleccionada en el buscador a la variable selectedTrack
-            // llamada a axios para guardar la canción seleccionada en la base de datos 
+            this.selectedTrack = track.track_id // Establecer el id de la canción seleccionada en el buscador a la variable selectedTrack
+            // llamada a axios para guardar la canción seleccionada en la base de datos ç
             axios
                 .post(`chat/${this.activeConversation.id}/music/`, { // Enviar la canción seleccionada al servidor mediante esta URL definida en el backend
-                    track_id: track.id, // Se le pasa como parámetro el id de la canción seleccionada
+                    track_id: track.track_id, // Se le pasa como parámetro el id de la canción seleccionada
                 })
                 .then(response => { // (Opcional y para Debug) Mostrar la respuesta del servidor en la consola
                     console.log('Track saved:', response.data)
@@ -156,7 +163,7 @@ export default {
         },
 
         setActiveConversation(id) {
-            this.activeConversation = id
+            this.activeConversation.id = id
             this.getMessages()
         },
 
@@ -167,7 +174,7 @@ export default {
                     this.conversations = response.data
 
                     if (this.conversations.length) {
-                        this.activeConversation = this.conversations[0].id
+                        this.activeConversation.id = this.conversations[0].id
                     }
                     this.getMessages()
 
@@ -179,7 +186,7 @@ export default {
 
         getMessages() {
             axios
-                .get(`chat/${this.activeConversation}/`)
+                .get(`chat/${this.activeConversation.id}/`)
                 .then(response => {
                     this.activeConversation = response.data
                     this.selectedTrack = response.data.track_id // Asignar la canción seleccionada guardada en la base de datos a la variable selectedTrack de la ...

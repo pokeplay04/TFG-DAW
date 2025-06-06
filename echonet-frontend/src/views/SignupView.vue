@@ -3,8 +3,9 @@
     <div class="row w-75 shadow rounded overflow-hidden" style="max-width: 900px;">
 
       <div class="col-md-6 text-white d-flex flex-column justify-content-center p-5" style="background-color: #580F78;">
-        <h2 class="mb-3">Bienvenido</h2>
+        <h2 class="mb-3">Huola</h2>
         <p class="mb-5">Accede mediante tu cuenta de Spotify</p>
+        <small class="mt-auto">trincame el pepino</small>
       </div>
 
       <!-- Lado derecho -->
