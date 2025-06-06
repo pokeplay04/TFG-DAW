@@ -5,8 +5,6 @@ from account.models import FriendshipRequest
 
 def create_notification(request, type_of_notification, post_id=None, friendrequest_id=None):
     created_for = None
-
-
     # Si la notificación es de tipo 'post_like' o 'post_comment', obtenemos el post y su creador
     if type_of_notification == 'post_like':
         body = f'{request.user.display_name} liked one of your posts!'
