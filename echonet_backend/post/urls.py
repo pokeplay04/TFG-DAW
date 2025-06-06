@@ -13,4 +13,5 @@ urlpatterns = [
     path('profile/<str:spotifyuser_pk>/', api.post_list_profile, name='post_list_profile'), # usa la pk del usuario
     path('create/', api.post_create, name='post_create'),
     path('trends/', api.get_trends, name='get_trends'),
+    
 ]

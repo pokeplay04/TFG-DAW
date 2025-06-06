@@ -105,12 +105,15 @@ def post_create(request):
             attachment.post = post
             attachment.save()
 
-        # se crea el music attachment independientemente del post
-        if music_attachment_form.is_valid():
-            music_attachment = music_attachment_form.save(commit=False)
-            music_attachment.created_by = request.user
-            music_attachment.post = post
-            music_attachment.save()
+        # si se ha enviado un track_id, se crea el music attachment
+        if request.data.get('track_id'):
+            music_attachment_form = MusicAttachmentForm(request.POST)
+            # se crea el music attachment independientemente del post
+            if  music_attachment_form.is_valid():
+                music_attachment = music_attachment_form.save(commit=False)
+                music_attachment.created_by = request.user
+                music_attachment.post = post
+                music_attachment.save()
 
         
         # se suma al user un post

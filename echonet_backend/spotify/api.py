@@ -50,50 +50,37 @@ def spotify_search(request):
     if search_type == 'album':
         for item in data.get('albums', {}).get('items', []):
             items.append({
-                'id': item['id'],
-                'title': item['name'],
-                'artist': item['artists'][0]['name'],
-                'image': item['images'][0]['url'] if item['images'] else '',
+                'album_id': item['id'],
+                'album_name': item['name'],
+                'album_artist': item['artists'][0]['name'],
+                'album_image': item['images'][0]['url'] if item['images'] else '',
+                'album_url': item['external_urls']['spotify'],
             })
-        serializer = SpotifyAlbumSerializer(items, many=True)
+        # serializer = SpotifyAlbumSerializer(items, many=True)
     elif search_type == 'artist':
         for item in data.get('artists', {}).get('items', []):
             items.append({
-                'id': item['id'],
-                'title': item['name'],
-                'image': item['images'][0]['url'] if item['images'] else '',
+                'artist_id': item['id'],
+                'artist_name': item['name'],
+                'artist_image': item['images'][0]['url'] if item['images'] else '',
+                'artist_url': item['external_urls']['spotify'],
             })
-        serializer = SpotifyArtistSerializer(items, many=True)
+        # serializer = SpotifyArtistSerializer(items, many=True)
 
     elif search_type == 'track':
         for item in data.get('tracks', {}).get('items', []):
             items.append({
-                'id': item['id'],
-                'title': item['name'],
-                'artist': item['artists'][0]['name'],
-                'image': item['album']['images'][0]['url'] if item['album']['images'] else '',
+                'track_id': item['id'],
+                'track_name': item['name'],
+                'track_artist': item['artists'][0]['name'],
+                'track_image': item['album']['images'][0]['url'] if item['album']['images'] else '',
+                'track_url': item['external_urls']['spotify'],
             })
-        serializer = SpotifyTrackSerializer(items, many=True)
+        # serializer = SpotifyTrackSerializer(items, many=True)
 
 
-    return Response({'results': serializer.data})
+    return Response({'results': items})
 
-
-# Endpoint para obtener el embed de Spotify
-#  - Para aañadir a post
-#  - Para añadir a chat
-@api_view(['GET'])
-def get_spotify_embed(request):
-    track_url = request.GET.get('url')
-    if not track_url:
-        return Response({'error': 'URL no proporcionada'}, status=400)
-
-    oembed_url = 'https://open.spotify.com/oembed'
-    response = requests.get(oembed_url, params={'url': track_url})
-    if response.status_code == 200:
-        return Response(response.json())
-    else:
-        return Response({'error': 'No se pudo obtener el embed'}, status=500)
 
 # Endpoint para obtener la reproducción actual de un usuario de Spotify
 @api_view(['GET'])
@@ -117,11 +104,14 @@ def get_now_playing(request):
         if data and 'item' in data:
             item = data['item']
             return Response({
-                'id': item['id'],
-                'title': item['name'],
-                'artist': item['artists'][0]['name'],
-                'image': item['album']['images'][0]['url'] if item['album']['images'] else '',
-                'url': item['external_urls']['spotify'],
+                'track_id': item['id'],
+                'track_name': item['name'],
+                'track_artist': item['artists'][0]['name'],
+                'track_image': item['album']['images'][0]['url'] if item['album']['images'] else '',
+                'track_url': item['external_urls']['spotify'],
+                # 'is_playing': data.get('is_playing', False),
+                # 'progress_ms': data.get('progress_ms', 0),
+                # 'duration_ms': item.get('duration_ms', 0),
             })
         else:
             return Response({'message': 'No hay reproducción actual'}, status=204)
@@ -143,7 +133,7 @@ def get_top_items(request):
     except SpotifyUser.DoesNotExist:
         return Response({'error': 'Usuario no encontrado'}, status=404)
 
-    search_type = request.GET.get('type')
+    search_type = request.GET.get('search_type')
     time_range = request.GET.get('time_range', 'medium_term')
     if not search_type:
         return Response({'error': 'Falta el parámetro "type"'}, status=400)
@@ -161,22 +151,40 @@ def get_top_items(request):
         if search_type == 'artists':
             for item in data.get('items', []):
                 items.append({
-                    'id': item['id'],
-                    'name': item['name'],
-                    'image': item['images'][0]['url'] if item['images'] else '',
+                    'artist_id': item['id'],
+                    'artist_name': item['name'],
+                    'artist_image': item['images'][0]['url'] if item['images'] else '',
+                    'artist_url': item['external_urls']['spotify'],
                 })
-            serializer = SpotifyArtistSerializer(items, many=True)
+            # serializer = SpotifyArtistSerializer(items, many=True)
         elif search_type == 'tracks':
             for item in data.get('items', []):
                 items.append({
-                    'id': item['id'],
-                    'name': item['name'],
-                    'artist': item['artists'][0]['name'],
-                    'image': item['album']['images'][0]['url'] if item['album']['images'] else '',
-                })
-            serializer = SpotifyTrackSerializer(items, many=True)
+                    'track_id': item['id'],
+                    'track_name': item['name'],
+                    'track_artist': item['artists'][0]['name'],
+                    'track_image': item['album']['images'][0]['url'] if item['album']['images'] else '',
+                    'track_url': item['external_urls']['spotify'],
+})
+            # serializer = SpotifyTrackSerializer(items, many=True)
 
-        return Response({'results': serializer.data})
+        return Response({'results': items})
     else:
         return Response({'error': 'Error al obtener los top items'}, status=response.status_code)
     
+
+# Endpoint para obtener el embed de Spotify
+#  - Para aañadir a post
+#  - Para añadir a chat
+@api_view(['GET'])
+def get_spotify_embed(request):
+    track_url = request.GET.get('url')
+    if not track_url:
+        return Response({'error': 'URL no proporcionada'}, status=400)
+
+    oembed_url = 'https://open.spotify.com/oembed'
+    response = requests.get(oembed_url, params={'url': track_url})
+    if response.status_code == 200:
+        return Response(response.json())
+    else:
+        return Response({'error': 'No se pudo obtener el embed'}, status=500)

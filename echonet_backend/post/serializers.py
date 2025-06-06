@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from account.serializers import SpotifyUserSerializer
 
-from .models import Post, PostAttachment, Comment, Trend
+from .models import Post, PostAttachment, Comment, Trend, PostMusicAttachment
 
 
 class PostAttachmentSerializer(serializers.ModelSerializer):
@@ -12,8 +12,8 @@ class PostAttachmentSerializer(serializers.ModelSerializer):
 
 class PostMusicAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PostAttachment
-        fields = ('id', 'track_id',)
+        model = PostMusicAttachment
+        fields = ('id', 'get_track_id',)
 
 class PostSerializer(serializers.ModelSerializer):
     created_by = SpotifyUserSerializer(read_only=True)
