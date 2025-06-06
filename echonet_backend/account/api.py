@@ -12,6 +12,7 @@ from notification.utils import create_notification
 from .forms import ProfileForm
 from .models import SpotifyUser, FriendshipRequest
 from .serializers import SpotifyUserSerializer, FriendshipRequestSerializer
+from spotify.serializers import SpotifyTrackSerializer, SpotifyAlbumSerializer, SpotifyArtistSerializer
 
 
 @api_view(['GET'])
@@ -24,6 +25,103 @@ def me(request):
         'email': request.user.email,
         'avatar': request.user.get_avatar()
     })
+
+
+# metodo para obtener galería musical de un usuario (fav artists, albums, tracks)
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def gallery(request, pk):
+    user = SpotifyUser.objects.get(pk=pk)
+
+    data = {
+        'tracks': SpotifyTrackSerializer(user.tracks.all(), many=True).data,
+        'albums': SpotifyAlbumSerializer(user.albums.all(), many=True).data,
+        'artists': SpotifyArtistSerializer(user.artists.all(), many=True).data
+    }
+
+    return JsonResponse(data, safe=False)
+
+# metodo para guardar un track_favorite, un album favorito o un artista favorito
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def save_favorite(request, pk):
+    user = SpotifyUser.objects.get(pk=pk)
+    item = request.data.get('item')
+    item_type = request.data.get('type')
+
+
+    if item_type == 'track':
+        track_id = item.get('track_id')
+        if track_id:
+            user.tracks.create(
+                track_id=item.get('track_id'),
+                track_name=item.get('track_name'),
+                track_artist=item.get('track_artist'),
+                track_image=item.get('track_image'),
+                track_url=item.get('track_url')
+            )
+            user.save()
+            return JsonResponse({'message': 'Track added to favorites'})
+        else:
+            return JsonResponse({'message': 'No track_id provided'}, status=400)
+
+    elif item_type == 'album':
+        album_id = item.get('album_id')
+        if album_id:
+            user.albums.create(
+                album_id=item.get('album_id'),
+                album_name=item.get('album_name'),
+                album_artist=item.get('album_artist'),
+                album_image=item.get('album_image'),
+                album_url=item.get('album_url')
+            )
+            user.save()
+            return JsonResponse({'message': 'Album added to favorites'})
+        else:
+            return JsonResponse({'message': 'No album_id provided'}, status=400)
+
+    elif item_type == 'artist':
+        artist_id = item.get('artist_id')
+        if artist_id:
+            user.artists.create(
+                artist_id=item.get('artist_id'),
+                artist_name=item.get('artist_name'),
+                artist_image=item.get('artist_image'),
+                artist_url=item.get('artist_url')
+            )
+            user.save()
+            return JsonResponse({'message': 'Artist added to favorites'})
+        else:
+            return JsonResponse({'message': 'No artist_id provided'}, status=400)
+
+    else:
+        return JsonResponse({'message': 'Invalid type'}, status=400)
+    
+    
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_favorite(request, pk):
+    user = SpotifyUser.objects.get(pk=pk)
+    item_id = request.data.get('item_id')
+    item_type = request.data.get('type')
+
+    if item_type == 'track':
+        user.tracks.filter(id=item_id).delete()
+        return JsonResponse({'message': 'Track removed from favorites'})
+
+    elif item_type == 'album':
+        user.albums.filter(id=item_id).delete()
+        return JsonResponse({'message': 'Album removed from favorites'})
+
+    elif item_type == 'artist':
+        user.artists.filter(id=item_id).delete()
+        return JsonResponse({'message': 'Artist removed from favorites'})
+
+    else:
+        return JsonResponse({'message': 'Invalid type'}, status=400)
 
 
 

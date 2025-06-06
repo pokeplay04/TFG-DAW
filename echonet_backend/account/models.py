@@ -5,8 +5,6 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.db import models
 from django.utils import timezone
 
-# class CustomUserManager(UserManager):
-
 class SpotifyUserManager(BaseUserManager):
     def create_user(self, id, email, display_name, **extra_fields):
         if not id:
@@ -27,10 +25,12 @@ class SpotifyUser(AbstractBaseUser, PermissionsMixin):
     id  = models.CharField(primary_key=True, max_length=255, unique=True)
     email = models.EmailField(unique=True)
     display_name = models.CharField(max_length=255)
+    bio = models.TextField(blank=True, null=True)
     access_token = models.TextField()
     refresh_token = models.TextField()
     token_expires = models.DateTimeField()
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
+    banner = models.ImageField(upload_to='banners', blank=True, null=True)
     friends = models.ManyToManyField('self')
     friends_count = models.IntegerField(default=0)
 
@@ -78,3 +78,38 @@ class FriendshipRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(SpotifyUser, related_name='created_friendshiprequests', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=SENT)
+
+
+
+# User favorite tracks
+class SpotifyUser_Fav_Tracks(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    track_id = models.CharField(max_length=255, blank=True, null=True)
+    track_name = models.CharField(max_length=255, blank=True, null=True)
+    track_artist = models.CharField(max_length=255, blank=True, null=True)
+    track_image = models.URLField(blank=True, null=True)
+    track_url = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(SpotifyUser, related_name='tracks', on_delete=models.CASCADE)
+
+
+# User favorite albums
+class SpotifyUser_Fav_Albums(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    album_id = models.CharField(max_length=255, blank=True, null=True)
+    album_name = models.CharField(max_length=255, blank=True, null=True)
+    album_artist = models.CharField(max_length=255, blank=True, null=True)
+    album_image = models.URLField(blank=True, null=True)
+    album_url = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(SpotifyUser, related_name='albums', on_delete=models.CASCADE)
+
+# User favorite artists
+class SpotifyUser_Fav_Artists(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    artist_id = models.CharField(max_length=255, blank=True, null=True)
+    artist_name = models.CharField(max_length=255, blank=True, null=True)
+    artist_image = models.URLField(blank=True, null=True)
+    artist_url = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(SpotifyUser, related_name='artists', on_delete=models.CASCADE)

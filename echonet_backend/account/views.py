@@ -21,7 +21,7 @@ def get_tokens_for_user(user):
     }
 
 def spotify_login(request):
-    scope = 'user-read-email user-read-private'
+    scope = 'user-read-email user-read-private user-read-playback-state user-read-currently-playing user-top-read user-modify-playback-state user-library-read user-library-modify playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private '
     query = {
         'client_id': settings.SPOTIFY_CLIENT_ID,
         'response_type': 'code',
