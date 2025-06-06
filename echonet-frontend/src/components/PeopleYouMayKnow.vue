@@ -1,24 +1,30 @@
 <template>
-    <div class="p-4 bg-white border border-gray-200 rounded-lg">
-        <h3 class="mb-6 text-xl">Personas que podrías conocer</h3>    
-            <div class="space-y-4">
-                <div 
-                    class="flex items-center justify-between"
-                    v-for="user in users"
-                    v-bind:key="user.id"
-                >
-                    <div class="flex items-center space-x-2">
-                        <img :src="user.get_avatar" class="w-[40px] rounded-full">
-                        
-                        <p class="text-xs"><strong>{{ user.name }}</strong></p>
-                    </div>
-    
-                    <RouterLink :to="{name: 'profile', params: {id: user.id}}" class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">Mostrar</RouterLink>
-                </div>
-            </div>
+  <div class="p-4 bg-white border rounded">
+    <h3 class="mb-4 h5">Personas que podrías conocer</h3>
+    <div class="d-grid gap-3">
+      <div 
+        class="d-flex justify-content-between align-items-center"
+        v-for="user in users"
+        :key="user.id"
+      >
+        <div class="d-flex align-items-center gap-2">
+          <img 
+            :src="user.get_avatar"
+            class="rounded-circle"
+            style="width: 40px; height: 40px; object-fit: cover;"
+          >
+
+          <RouterLink 
+            :to="{ name: 'profile', params: { id: user.id } }"
+            class="mb-0 small text-decoration-none fw-bold text-dark"
+          >
+            {{ user.display_name }}
+          </RouterLink>
         </div>
-    </template>
-    
+      </div>
+    </div>
+  </div>
+</template>
     <script>
     import axios from "@/utils/axios"
     

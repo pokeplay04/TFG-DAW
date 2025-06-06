@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-white border rounded shadow-sm">
+  <div class="p-4 bg-white border rounded shadow-sm w-100">
     <input
       v-model="search"
       class="form-control mb-3"
@@ -13,29 +13,30 @@
 
     <div
       v-for="song in songs"
-      :key="song.id"
-      class="d-flex align-items-center justify-content-between mb-3"
+      :key="song[search_type + '_id']"
+      class="d-flex align-items-center justify-content-between mb-3 w-100"
     >
-      <div class="d-flex align-items-center">
-        <img :src="song.image" alt="Portada" class="rounded me-3" width="50" height="50" />
-        <div>
-          <strong>{{ song.title }}</strong><br />
-          <small class="text-muted">{{ song.artist }}</small>
-        </div>
+      <div class="flex-grow-1 me-2 text-truncate">
+        <PreviewItem :item="song" :search-type="search_type" />
       </div>
 
-      <button @click="$emit('select', song)" class="btn btn-sm btn-primary">
+
+      <button @click="$emit('select', song)" class="btn btn-sm btn-success">
         Añadir
       </button>
     </div>
+
   </div>
 </template>
 
 
 <script>
 import axios from '@/utils/axios'
+import PreviewItem from '@/components/PreviewItem.vue'
+
 
 export default {
+  components: { PreviewItem },
   name: 'SongList',
 
   props: {
@@ -75,7 +76,7 @@ export default {
           this.songs = response.data.results
         })
         .catch(error => {
-          console.error('Error al buscar canciones:', error)
+          console.error('Error al buscar :', error)
           this.songs = []
         })
         .finally(() => {
