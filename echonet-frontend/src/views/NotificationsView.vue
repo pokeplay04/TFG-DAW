@@ -70,6 +70,7 @@ export default {
                     } else {
                         this.$router.push({ name: 'friends', params: { id: notification.created_for_id } })
                     }
+                    console.log(response.data)
                 })
                 .catch(error => {
                     console.log('Error: ', error)

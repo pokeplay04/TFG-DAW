@@ -13,22 +13,56 @@
                         >
                             <div class="d-flex align-items-center gap-2">
                                 <template v-for="user in conversation.users" :key="user.id">
-                                    <img :src="user.get_avatar" class="rounded-circle" width="40" height="40" />
-                                    <p 
-                                        class="fw-bold small mb-0"
-                                        v-if="user.id !== userStore.user.id"
-                                    >{{ user.display_name }}</p>
+                                    <img :src="user.get_avatar" class="rounded-circle" width="40" height="40"  v-if="user.id !== userStore.user.id" />
+                                    <p class="fw-bold small mb-0" v-if="user.id !== userStore.user.id">{{ user.display_name }}</p>
                                 </template>
                             </div>
-                            <span class="text-muted small">Hace {{ conversation.modified_at_formatted }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-9">
+                <div v-if="activeConversation && activeConversation.users" class="d-flex align-items-center gap-3 px-4 bg-white border rounded justify-content-between">
+                    <template v-for="user in activeConversation.users" :key="user.id">
+                        <template v-if="user.id !== userStore.user.id" class="">
+                            <div class="d-flex align-items-center gap-3">
+                                <img :src="user.get_avatar" class="rounded-circle" width="70" height="70" />
+                                <h5><RouterLink :to="{ name: 'profile', params: { id: user.id } }" style="text-decoration: none;">{{ user.display_name }}</RouterLink></h5>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-outline-primary btn-sm" @click="showSongSearch = true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4cd964" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                                        <path d="M9 17v-13h10v6" />
+                                        <path d="M9 8h10" />
+                                        <path d="M17.8 20.817l-2.172 1.138a.392 .392 0 0 1 -.568 -.41l.415 -2.411l-1.757 -1.707a.389 .389 0 0 1 .217 -.665l2.428 -.352l1.086 -2.193a.392 .392 0 0 1 .702 0l1.086 2.193l2.428 .352a.39 .39 0 0 1 .217 .665l-1.757 1.707l.414 2.41a.39 .39 0 0 1 -.567 .411l-2.172 -1.138z" />
+                                    </svg>
+                                </button>
+                                <div v-if="selectedTrack" clas="align-items-center">
+                                    <iframe
+                                        :src="`https://open.spotify.com/embed/track/${selectedTrack}`" 
+                                        width="400px"
+                                        height="80"
+                                        frameborder="0"
+                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                        loading="lazy"
+                                        style="border-radius:12px">
+                                    </iframe>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <!-- Modal para SongList -->
+                    <div v-if="showSongSearch" class="modal-overlay" @click.self="showSongSearch = false" style="position: fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999;">
+                        <div class="modal-content" style="background:white; padding:2rem; border-radius:12px; max-width:600px; width:90%; max-height:90vh; overflow-y:auto; position:relative;">
+                            <button class="btn btn-sm btn-danger float-end" @click="showSongSearch = false">✖</button>
+                            <SongList search_type="track" @select="handleTrackSelect" />
+                        </div>
+                    </div>
+                </div>
                 <div 
-                    class="bg-white border rounded mb-4 p-3"
+                    class="bg-white border rounded p-3"
                     style="height: 500px; overflow-y: auto;"
                     ref="messagesContainer"
                 >
@@ -69,7 +103,7 @@
                             v-model="body" 
                             class="form-control form-control-sm" 
                             placeholder="¿Qué quieres decir?" 
-                            rows="1"
+                            rows="2"
                             style="resize: none;"
                         ></textarea>
 
@@ -77,41 +111,20 @@
                     </form>
                 </div>
 
-
-                <!-- Camponente songlist desde donde buscamos y seleccionamos la canción que queremos -->
-                <SongList search_type="track" @select="handleTrackSelect" /> 
-
-                <!-- Iframe que muestra la canción seleccionada solo si la variable selectedTrack (la que indica la canción seleccionada) tiene valor -->
-                <div v-if="selectedTrack" class="mt-4">
-                <!-- Construimos la url en scr añadiendole el ID de la cancion seleccionada (valor de selectedTrack) ya que así es como funcionan las urls de Spotify -->
-                <iframe
-                    :src="`https://open.spotify.com/embed/track/${selectedTrack}`" 
-                    width="40%"
-                    height="80"
-                    frameborder="0"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                    style="border-radius:12px">
-                </iframe>
-                </div>
-                
-
-
             </div>
         </div>
     </div>
 </template>
-
 <script>
 import axios from "@/utils/axios"
 import { useUserStore } from '@/stores/user'
-import SongList from '../components/SongList.vue' // Importar el componente SongList para podder usarlo en el script
+import SongList from '../components/SongList.vue'
 
 export default {
     name: 'chat',
 
     components: {
-        SongList // Registrar el componente SongList para poder usarlo en la vista
+        SongList
     },
     setup() {
         const userStore = useUserStore()
@@ -120,33 +133,38 @@ export default {
 
     data() {
         return {
-            selectedTrack: null, // Variable para almacenar la canción seleccionada (su ID) que se va a establecer en el chat
+            selectedTrack: null,
             conversations: [],
             activeConversation: {},
-            body: ''
+            body: '',
+            intervalId: null, // <-- Guardamos el ID del intervalo aquí
+            showSongSearch: false
         }
     },
 
-mounted() {
-    this.getConversations()
+    mounted() {
+        this.getConversations()
 
-    setInterval(() => {
-        if (this.activeConversation && this.activeConversation.id) {
-            console.log('Fetching messages for conversation:', this.activeConversation)
-            this.getMessages()
-        }
-    }, 1000)
-},
+        this.intervalId = setInterval(() => {  // <-- Guardamos el ID para poder limpiarlo después
+            if (this.activeConversation && this.activeConversation.id) {
+                console.log('Fetching messages for conversation:', this.activeConversation)
+                this.getMessages()
+            }
+        }, 1000)
+    },
+
+    beforeUnmount() {  // <-- Aquí limpiamos el intervalo cuando el componente se desmonta
+        clearInterval(this.intervalId)
+    },
 
     methods: {
-        handleTrackSelect(track) { // Método para manejar la selección de una canción desde el componente SongList
-            this.selectedTrack = track.track_id // Establecer el id de la canción seleccionada en el buscador a la variable selectedTrack
-            // llamada a axios para guardar la canción seleccionada en la base de datos ç
+        handleTrackSelect(track) {
+            this.selectedTrack = track.track_id
             axios
-                .post(`chat/${this.activeConversation.id}/music/`, { // Enviar la canción seleccionada al servidor mediante esta URL definida en el backend
-                    track_id: track.track_id, // Se le pasa como parámetro el id de la canción seleccionada
+                .post(`chat/${this.activeConversation.id}/music/`, {
+                    track_id: track.track_id,
                 })
-                .then(response => { // (Opcional y para Debug) Mostrar la respuesta del servidor en la consola
+                .then(response => {
                     console.log('Track saved:', response.data)
                 })
                 .catch(error => {
@@ -177,7 +195,6 @@ mounted() {
                         this.activeConversation.id = this.conversations[0].id
                     }
                     this.getMessages()
-
                 })
                 .catch(error => {
                     console.log(error)
@@ -188,9 +205,9 @@ mounted() {
             axios
                 .get(`chat/${this.activeConversation.id}/`)
                 .then(response => {
-                    this.activeConversation = response.data
-                    this.selectedTrack = response.data.track_id // Asignar la canción seleccionada guardada en la base de datos a la variable selectedTrack de la ...
-                    this.scrollToBottom()                       // ... vista cada vez que se cargan los mensajes (se cambie de chat) para tenerlo siempre actualizado
+                    this.activeConversation = response.data 
+                    this.selectedTrack = response.data.track_id
+                    this.scrollToBottom()
                 })
                 .catch(error => {
                     console.log(error)
@@ -213,4 +230,4 @@ mounted() {
         }
     }
 }
-</script>
+</script>       

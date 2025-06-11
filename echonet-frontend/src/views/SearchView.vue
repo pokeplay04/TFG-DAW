@@ -2,42 +2,46 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-9">
-                <div class="bg-white border rounded p-4">
+                <div class="bg-white border rounded p-2">
                     <form @submit.prevent="submitForm" class="d-flex">
                         <input 
                             v-model="query" 
                             type="search" 
-                            class="form-control p-4" 
+                            class="form-control p-3" 
                             placeholder="¿Qué estás buscando?"
                         >
 
                         <button class="btn btn-purple ms-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16.65" y1="16.65" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                             </svg>
                         </button>
                     </form>
                 </div>
 
-                <div class="row mt-4" v-if="users.length">
-                    <div 
-                        class="col-md-3 mb-4" 
-                        v-for="user in users" 
-                        :key="user.id"
-                    >
-                        <div class="bg-white border rounded-lg text-center p-4">
-                            <img :src="user.get_avatar" class="mb-3 rounded-circle" width="100">
+                <div class="row mt-4" v-if="users.length" style="overflow-x: auto; white-space: nowrap;">
+                    <div class="d-flex flex-nowrap ">
+                        <div 
+                            class="col-md-3 mb-3" 
+                            v-for="user in users" 
+                            :key="user.id"
+                        >
+                            <div class="bg-white border rounded-lg text-center p-3">
+                                <img :src="user.get_avatar" class="mb-3 rounded-circle" width="100">
 
-                            <p>
-                                <strong>
-                                    <RouterLink :to="{name: 'profile', params:{'id': user.id}}">{{ user.display_name }}</RouterLink>
-                                </strong>
-                            </p>
+                                <p>
+                                    <strong>
+                                        <RouterLink :to="{name: 'profile', params:{'id': user.id}}">{{ user.display_name }}</RouterLink>
+                                    </strong>
+                                </p>
 
-                            <div class="d-flex justify-content-around">
-                                <p class="text-muted">{{ user.friends_count }} amigos</p>
-                                <p class="text-muted">{{ user.posts_count }} posts</p>
+                                <div class="d-flex justify-content-around">
+                                    <p class="text-muted">{{ user.friends_count }} amigos</p>
+                                    <p class="text-muted">{{ user.posts_count }} posts</p>
+                                </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -52,9 +56,14 @@
             </div>
 
             <div class="col-lg-3">
-                <PeopleYouMayKnow />
-
-                <Trends />
+                <div class="position-sticky" style="top: 80px;">
+                    <div class="mb-3">
+                        <PeopleYouMayKnow />
+                    </div>
+                    <div>
+                        <Trends />
+                    </div>
+                </div>
             </div>
         </div>
     </div>

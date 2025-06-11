@@ -4,7 +4,7 @@
             <!-- Left Section (Trending Posts) -->
             <div class="col-lg-9">
                 <div class="bg-white border rounded p-4">
-                    <h2 class="h4">Trend: #{{ $route.params.id }}</h2>
+                    <h2 class="h4">Trend: <strong>#{{ $route.params.id }}</strong></h2>
                 </div>
                 
                 <div 
@@ -18,9 +18,12 @@
 
             <!-- Right Section (Suggested People & Trends) -->
             <div class="col-lg-3">
-                <PeopleYouMayKnow />
-
-                <Trends />
+                <div class="mb-3">
+                    <PeopleYouMayKnow />
+                </div>
+                <div>
+                    <Trends />
+                </div>
             </div>
         </div>
     </div>
