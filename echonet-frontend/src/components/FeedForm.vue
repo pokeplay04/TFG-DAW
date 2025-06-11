@@ -6,21 +6,21 @@
       <textarea v-model="body" id="postBody" class="form-control" rows="3" placeholder="Escribe algo..."></textarea>
     </div>
 
-
-
     <!-- Vista previa de imagen -->
-    <div v-if="url" class="mb-3">
+    <div v-if="url" class="mb-3 position-relative">
       <label class="form-label">Preview de la imagen:</label><br />
       <img :src="url" class="rounded img-thumbnail" style="max-width: 150px;" />
+      <button @click="removeImage" type="button" class="btn btn-danger btn-sm position-absolute" style="top: 0; right: 0;">✖</button>
     </div>
 
     <!-- Vista previa de canción seleccionada -->
-    <div v-if="selectedTrack" class="mb-3 d-flex align-items-center gap-3 border p-2 rounded">
+    <div v-if="selectedTrack" class="mb-3 d-flex align-items-center gap-3 border p-2 rounded position-relative">
       <img :src="selectedTrack.track_image" alt="track" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
       <div>
         <div class="fw-bold">{{ selectedTrack.track_name }}</div>
         <div class="text-muted">{{ selectedTrack.track_artist }}</div>
       </div>
+      <button @click="removeTrack" type="button" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px;">✖</button>
     </div>
 
     <!-- Botones: Adjuntar imagen y buscar canción -->
@@ -36,17 +36,17 @@
         </button>
       </div>
 
-      <div class="gap-2 d-flex ">
-          <!-- Checkbox de privacidad -->
-          <div class="form-check justify-content-end mb-0 pt-4">
-            <input class="form-check-input" type="checkbox" v-model="is_private" id="isPrivate">
-            <label class="form-check-label" for="isPrivate">Privado</label>
-          </div>
+      <div class="gap-2 d-flex">
+        <!-- Checkbox de privacidad -->
+        <div class="form-check justify-content-end mb-0 pt-4">
+          <input class="form-check-input" type="checkbox" v-model="is_private" id="isPrivate">
+          <label class="form-check-label" for="isPrivate">Privado</label>
+        </div>
 
-          <!-- Botón de envío -->
-          <div class="d-flex justify-content-end pt-3">
-            <button type="submit" class="btn btn-success">Post</button>
-          </div>
+        <!-- Botón de envío -->
+        <div class="d-flex justify-content-end pt-3">
+          <button type="submit" class="btn btn-success">Post</button>
+        </div>
       </div>
 
     </div>
@@ -62,8 +62,6 @@
         <SongList @select="handleTrackSelect" />
       </div>
     </div>
-
-
   </form>
 </template>
 
@@ -113,11 +111,19 @@ export default {
       this.selectedTrack = track
       this.showSongSearch = false
     },
+    removeImage() {
+      this.url = null
+      this.$refs.file.value = null
+    },
+    removeTrack() {
+      this.selectedTrack = null
+    },
     submitForm() {
-      if (!this.body.trim() && !this.$refs.file.files[0] && !this.selectedTrack) {
+      if (!this.body.trim() && !this.$refs.file?.files[0] && !this.selectedTrack) {
         this.toastStore.showToast(5000, "No se puede enviar un post vacío", "bg-danger");
         return
       }
+
       const formData = new FormData()
       if (this.$refs.file?.files[0]) {
         formData.append('image', this.$refs.file.files[0])
@@ -146,6 +152,16 @@ export default {
 </script>
 
 <style scoped>
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -170,5 +186,3 @@ export default {
   position: relative;
 }
 </style>
-
-

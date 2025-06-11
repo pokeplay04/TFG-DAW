@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 bg-white border border-gray-200 rounded-lg">
+    <div class="p-4 bg-white border rounded">
         <h3 class="mb-6 text-xl">Trends</h3>
 
         <div class="space-y-4">
@@ -8,12 +8,10 @@
                 v-for="trend in trends"
                 v-bind:key="trend.id"
             >
-                <p class="text-xs">
-                    <strong>#{{ trend.hashtag }}</strong><br>
-                    <span class="text-gray-500">{{ trend.occurences }} posts</span>
-                </p>
+                <RouterLink :to="{name: 'trendview', params: {id: trend.hashtag}}" class="text-xs rounded-lg"><strong>#{{ trend.hashtag }}</strong></RouterLink>
 
-                <RouterLink :to="{name: 'trendview', params: {id: trend.hashtag}}" class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">Explore</RouterLink>
+                <p class="text-gray-500">{{ trend.occurences }} posts</p>
+
             </div>
         </div>
     </div>

@@ -8,11 +8,12 @@
         </strong>
       </p>
     </div>
-    <p class="text-muted mb-0">{{ post.created_at_formatted }} ago</p>
+    <p class="text-muted mb-0">Hace {{ post.created_at_formatted }}</p>
   </div>
 
   <p>{{ post.body }}</p>
 
+  <!-- Imágenes adjuntas -->
   <template v-if="post.attachments.length">
     <img
       v-for="image in post.attachments"
@@ -22,9 +23,11 @@
     />
   </template>
 
+  <!-- Música adjunta -->
   <div v-if="post.music_attachments.length" class="mb-3">
     <iframe 
       v-for="track in post.music_attachments"
+      :key="track.id"
       :src="`https://open.spotify.com/embed/track/${track.get_track_id}?utm_source=generator`"
       width="100%"
       height="80"
@@ -35,12 +38,13 @@
     ></iframe>
   </div>
 
+  <!-- Barra inferior con likes, comentarios... -->
   <div class="my-4 d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-4">
       <div class="d-flex align-items-center gap-2" @click="likePost(post.id)" role="button">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#00BE29" style="width: 16px; height: 16px;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#00BE29" style="width: 16px; height: 16px;">      
           <path d="M11 11.5v-1a1.5 1.5 0 0 1 3 0v1.5" />
-          <path d="M17 12v-6.5a1.5 1.5 0 0 1 3 0v10.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47" />
+          <path d="M17 12v-6.5a1.5 1.5 0 0 1 3 0v10.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l.47 .47" />
           <path d="M14 10.5a1.5 1.5 0 0 1 3 0v1.5" />
           <path d="M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5" />
         </svg>
@@ -77,9 +81,15 @@
     </div>
   </div>
 
+  <!-- Menú extra -->
   <div v-if="showExtraModal">
     <div class="d-flex align-items-center gap-4">
-      <div class="d-flex align-items-center gap-2 text-danger small" @click="deletePost" v-if="userStore.user.id === post.created_by.id" role="button">
+
+      <!-- Botón de Borrar con confirmación -->
+      <div class="d-flex align-items-center gap-2 text-danger small" 
+           @click="showConfirmDeleteModal = true" 
+           v-if="userStore.user.id === post.created_by.id" 
+           role="button">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
           stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
           <path d="M4 7h16" />
@@ -90,6 +100,7 @@
         <span>Borrar post</span>
       </div>
 
+      <!-- Reportar Post -->
       <div class="d-flex align-items-center gap-2 text-warning small" @click="reportPost" role="button">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
           stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
@@ -100,6 +111,24 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de Confirmación -->
+  <div v-if="showConfirmDeleteModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p class="mb-0">¿Estás seguro de que deseas borrar este post? Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" @click="showConfirmDeleteModal = false">Cancelar</button>
+          <button type="button" class="btn btn-danger btn-sm" @click="deletePost">Borrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay cuando el modal está abierto -->
+  <div v-if="showConfirmDeleteModal" class="modal-backdrop fade show"></div>
 </template>
 
 <script>
@@ -109,6 +138,7 @@ import { useUserStore } from '@/stores/user'
 import { useToastStore } from '@/stores/toast'
 
 export default {
+  name: 'FeedItem',
   props: {
     post: Object
   },
@@ -120,7 +150,8 @@ export default {
   },
   data() {
     return {
-      showExtraModal: false
+      showExtraModal: false,
+      showConfirmDeleteModal: false
     }
   },
   methods: {
@@ -142,6 +173,7 @@ export default {
       axios.delete(`posts/${this.post.id}/delete/`)
         .then(() => this.toastStore.showToast(5000, 'El post ha sido borrado', 'bg-emerald-500'))
         .catch(err => console.error(err))
+      this.showConfirmDeleteModal = false
     },
     toggleExtraModal() {
       this.showExtraModal = !this.showExtraModal
