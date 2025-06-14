@@ -3,6 +3,8 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils.timesince import timesince
+from django.utils import timezone
+from django.utils.translation import override
 
 from account.models import SpotifyUser
 
@@ -25,7 +27,8 @@ class Comment(models.Model):
         ordering = ('created_at',)
     
     def created_at_formatted(self):
-       return timesince(self.created_at)
+        with override('es'):
+            return timesince(self.created_at, timezone.now())
 
 
 class PostAttachment(models.Model):
