@@ -24,6 +24,7 @@ class ConversationMessageSerializer(serializers.ModelSerializer):
 
 class ConversationDetailSerializer(serializers.ModelSerializer):
     messages = ConversationMessageSerializer(read_only=True, many=True)
+    users = SpotifyUserSerializer(read_only=True, many=True)
 
     class Meta:
         model = Conversation

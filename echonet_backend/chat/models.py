@@ -3,6 +3,8 @@ import uuid
 from django.db import models
 from django.utils.timesince import timesince
 from django.core.exceptions import ValidationError
+from django.utils.translation import override
+from django.utils import timezone
 
 from account.models import SpotifyUser
 
@@ -16,7 +18,8 @@ class Conversation(models.Model):
 
     
     def modified_at_formatted(self):
-       return timesince(self.created_at)
+        with override('es'):
+            return timesince(self.created_at, timezone.now())
 
 
 class ConversationMessage(models.Model):
@@ -28,7 +31,8 @@ class ConversationMessage(models.Model):
     created_by = models.ForeignKey(SpotifyUser, related_name='sent_messages', on_delete=models.CASCADE)
     
     def created_at_formatted(self):
-       return timesince(self.created_at)
+        with override('es'):
+            return timesince(self.created_at, timezone.now())
 
     def clean(self):
         if self.created_by not in self.conversation.users.all():
