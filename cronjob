@@ -1,0 +1,2 @@
+* * * * * root cd /app && /bin/bash -c "python scripts/generate_friend_suggestions.py >> /var/log/friend_suggestions.log 2>&1"
+* * * * * root cd /app && /bin/bash -c "python scripts/generate_trends.py >> /var/log/trends.log 2>&1"

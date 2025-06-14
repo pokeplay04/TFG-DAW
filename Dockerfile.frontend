@@ -1,0 +1,16 @@
+    FROM node:20-buster
+
+    WORKDIR /app
+
+    # Copiar solo el package.json
+    COPY echonet-frontend/package*.json ./
+
+    # Limpiar cache y reinstalar dependencias
+    RUN npm config set script-shell bash && \
+        npm cache clean --force && \
+        npm install
+
+    # Exponer puerto de desarrollo de Vite
+    EXPOSE 5173
+# poner 
+    CMD ["npm", "run", "dev"]
