@@ -124,8 +124,8 @@ WSGI_APPLICATION = 'echonet_backend.wsgi.application'
 # Base de datos PostgreSQL (desde variable de entorno)
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://echonet:secreta@db:5432/echonetdb',
-        conn_max_age=600
+        default='postgresql://postgres:dFSjarqIywDKddBfhtuTGAiaurpcgbXj@switchback.proxy.rlwy.net:58387/railway',
+        conn_max_age=600,
     )
 }
 
