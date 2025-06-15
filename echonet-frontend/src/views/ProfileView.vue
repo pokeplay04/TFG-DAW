@@ -3,7 +3,7 @@
     <!-- Contenido principal -->
     <div class="row g-4 h-100">
       <!-- Columna izquierda: Perfil (sticky) -->
-      <div class="col-lg-4 col-md-6 position-sticky top-0">
+      <div class="col-lg-4 col-md-6 top-0">
         <div class="bg-white p-4 rounded shadow-sm overflow-y-auto" style="height: 650px;">
           <!-- Avatar y nombre -->
             <div class="d-flex flex-column align-items-center mb-3">
@@ -18,14 +18,14 @@
               <button class="btn btn-outline-primary btn-sm" @click="sendFriendshipRequest" v-if="userStore.user.id !== user.id && can_send_friendship_request">Enviar solicitud</button>
             </div>
             <div class="d-flex gap-2">
-              <RouterLink to="/profile/edit" class="btn btn-dark btn-sm" v-if="userStore.user.id === user.id">
+              <RouterLink to="/profile/edit" class="btn btn-sm" v-if="userStore.user.id === user.id">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00BE29" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 20h9" />
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
               </RouterLink>
-              <button class="btn btn-dark btn-sm" @click="logout" v-if="userStore.user.id === user.id">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00BE29" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+              <button class="btn btn-sm" @click="logout" v-if="userStore.user.id === user.id" style="background-color:#00BE29;">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 16l4-4-4-4" />
                   <path d="M10 12h8" />
                   <path d="M4 4v16" />

@@ -56,7 +56,12 @@
                     <!-- Modal para SongList -->
                     <div v-if="showSongSearch" class="modal-overlay" @click.self="showSongSearch = false" style="position: fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999;">
                         <div class="modal-content" style="background:white; padding:2rem; border-radius:12px; max-width:600px; width:90%; max-height:90vh; overflow-y:auto; position:relative;">
-                            <button class="btn btn-sm btn-danger float-end" @click="showSongSearch = false">✖</button>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted">Escribe para buscar canción...</span>
+                                <button class="btn btn-sm btn-danger position-relative" @click="showSongSearch = false">
+                                    ✖ <!-- Solo el botón de cierre -->
+                                </button>
+                            </div>
                             <SongList search_type="track" @select="handleTrackSelect" />
                         </div>
                     </div>
@@ -170,6 +175,7 @@ export default {
                 .catch(error => {
                     console.error('Error saving track:', error)
                 })
+            this.showSongSearch = false
         },
         scrollToBottom() {
             this.$nextTick(() => {
@@ -231,3 +237,13 @@ export default {
     }
 }
 </script>       
+<style scoped>
+
+/* Posicionamiento del botón de cierre */
+.modal-content .btn.btn-sm.btn-danger {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+</style>

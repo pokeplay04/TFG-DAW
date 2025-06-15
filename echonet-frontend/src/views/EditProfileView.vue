@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container mt-2">
     <div class="row g-4">
       <!-- Left Section -->
       <div class="col-lg-5">
