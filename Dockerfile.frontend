@@ -1,16 +1,21 @@
-    FROM node:20-buster
+FROM node:20-buster
 
-    WORKDIR /app
 
-    # Copiar solo el package.json
-    COPY echonet-frontend/package*.json ./
+ENV NODE_OPTIONS=--no-warnings
 
-    # Limpiar cache y reinstalar dependencias
-    RUN npm config set script-shell bash && \
-        npm cache clean --force && \
-        npm install
+RUN adduser --disabled-password --gecos '' nodeuser
+USER nodeuser
 
-    # Exponer puerto de desarrollo de Vite
-    EXPOSE 5173
-# poner 
-    CMD ["npm", "run", "dev"]
+WORKDIR /app
+
+COPY --chown=nodeuser:nodeuser echonet-frontend/package*.json ./ 
+
+RUN npm config set script-shell bash && \
+    npm cache clean --force && \
+    npm install
+
+COPY --chown=nodeuser:nodeuser echonet-frontend/ .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]
