@@ -8,7 +8,7 @@
         </strong>
       </p>
     </div>
-    <p class="text-muted mb-0">Hace {{ post.created_at_formatted }}</p>
+    <p class="text-muted small mb-0" style="font-size: 0.75rem;">Hace {{ post.created_at_formatted }}</p>
   </div>
 
   <p>{{ post.body }}</p>

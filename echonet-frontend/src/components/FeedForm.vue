@@ -58,7 +58,13 @@
       @click.self="showSongSearch = false"
     >
       <div class="modal-content">
-        <button class="btn btn-sm btn-danger float-end" @click="showSongSearch = false">✖</button>
+        <!-- Barra superior del modal -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted">Escribe para buscar canción...</span>
+          <button class="btn btn-sm btn-danger position-relative" @click="showSongSearch = false">
+            ✖ <!-- Solo el botón de cierre -->
+          </button>
+        </div>
         <SongList @select="handleTrackSelect" />
       </div>
     </div>
@@ -185,4 +191,12 @@ export default {
   overflow-y: auto;
   position: relative;
 }
+
+/* Posicionamiento del botón de cierre */
+.modal-content .btn.btn-sm.btn-danger {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
 </style>
