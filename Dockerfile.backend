@@ -1,13 +1,24 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+LABEL maintainer="mariadaw@tumail.com"
+LABEL description="Backend Django para DockerHub"
 
-# Copiar solo los requirements
-COPY echonet_backend/requirements.txt .
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Instalar dependencias
+RUN adduser --disabled-password --gecos '' django
+USER django
+WORKDIR /home/django/app
+
+COPY --chown=django:django echonet_backend/requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY --chown=django:django echonet_backend/ .
+
+ 
 
 EXPOSE 8000
 
+WORKDIR /home/django/app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
