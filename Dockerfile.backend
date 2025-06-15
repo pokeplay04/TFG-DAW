@@ -1,24 +1,49 @@
+# Usamos una imagen ligera y con soporte a largo plazo
 FROM python:3.11-slim
 
+# Información opcional para quien revise la imagen
 LABEL maintainer="mariadaw@tumail.com"
 LABEL description="Backend Django para DockerHub"
 
+# Evitamos interactividad durante instalaciones
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Creamos un usuario no-root para mayor seguridad
 RUN adduser --disabled-password --gecos '' django
 USER django
 WORKDIR /home/django/app
 
+# Copiamos solo los requirements primero
 COPY --chown=django:django echonet_backend/requirements.txt .
 
+# Instalamos dependencias sin cache
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Agregamos psycopg2 (necesario para PostgreSQL)
+RUN pip install --no-cache-dir psycopg2-binary dj-database-url python-decouple
+
+# Copiamos el resto del código
 COPY --chown=django:django echonet_backend/ .
 
- 
-
+# Exponemos el puerto
 EXPOSE 8000
 
+# Cambiamos al directorio correcto y corremos el servidor
 WORKDIR /home/django/app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+
+# FROM python:3.11-slim
+
+# WORKDIR /app
+
+# # Copiar solo los requirements
+# COPY echonet_backend/requirements.txt .
+
+# # Instalar dependencias
+# RUN pip install --no-cache-dir -r requirements.txt
+
+# EXPOSE 8000
+
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

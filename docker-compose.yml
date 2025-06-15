@@ -1,14 +1,39 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: echonet
+      POSTGRES_PASSWORD: secreta
+      POSTGRES_DB: echonetdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - echonetnet
+
   frontend:
     image: mariadaw/vue-app:latest
     ports:
       - "5173:5173"
     working_dir: /app
+    networks:
+      - echonetnet
 
   backend:
     image: mariadaw/django-api:latest
     ports:
       - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://echonet:secreta@db:5432/echonetdb
+    depends_on:
+      - db
     command: python manage.py runserver 0.0.0.0:8000
+    networks:
+      - echonetnet
+
+volumes:
+  postgres_data:
+
+networks:
+  echonetnet:

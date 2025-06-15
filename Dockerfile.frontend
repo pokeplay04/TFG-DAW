@@ -1,21 +1,30 @@
+# Usamos Node.js LTS con Debian Buster
 FROM node:20-buster
 
 
+# Configuramos variables de entorno comunes
 ENV NODE_OPTIONS=--no-warnings
 
+# Creamos un usuario no-root
 RUN adduser --disabled-password --gecos '' nodeuser
 USER nodeuser
 
+# Definimos el directorio de trabajo raíz
 WORKDIR /app
 
+# Copiamos solo package.json y package-lock.json
 COPY --chown=nodeuser:nodeuser echonet-frontend/package*.json ./ 
 
+# Limpiamos cache y reinstalamos dependencias
 RUN npm config set script-shell bash && \
     npm cache clean --force && \
     npm install
 
+# Copiamos todo el frontend
 COPY --chown=nodeuser:nodeuser echonet-frontend/ .
 
+# Exponemos el puerto de desarrollo de Vite
 EXPOSE 5173
 
+# Arrancamos el servidor
 CMD ["npm", "run", "dev"]
