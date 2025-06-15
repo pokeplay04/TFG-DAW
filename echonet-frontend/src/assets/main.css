@@ -17,9 +17,9 @@ body {
 
 /* Utility classes */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    /* max-width: 1200px; */
+    /* margin: 0 auto; */
+    padding: 0 0rem;
 }
 
 .text-center {
@@ -58,9 +58,56 @@ nav a {
     padding: 0.5rem 1rem;
 }
 
-nav a:hover {
-    background-color: #575757;
+nav a:hover{
+    .logo{
+        filter: brightness(0) saturate(100%) invert(70%) sepia(80%) saturate(500%) hue-rotate(60deg) brightness(1.2);
+    }
+    
+} 
+
+.nav-link{
+    color: #00be29;
 }
+
+.nav-link:hover {
+    color: #00a11f;
+}
+
+a {
+    color: #00be29;
+}
+
+/* cambiar estilo de btn primary bootstrap para uqe sea color verde */
+.btn-primary {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+.btn-primary:hover {
+    background-color: #45a049;
+    border-color: #45a049;
+}
+
+.bg-primary {
+    background-color: #4CAF50 !important;
+}
+
+.btn-outline-primary {
+    color: #4CAF50;
+    border-color: #4CAF50;
+}
+.btn-outline-primary:hover {
+    svg{
+        stroke: white;
+    }
+    color: white;
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+
+
+
+
 
 /* Footer styles */
 footer {
