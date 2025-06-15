@@ -1,22 +1,6 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:15
-    healthcheck:
-      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "5432"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    environment:
-      POSTGRES_USER: echonet
-      POSTGRES_PASSWORD: secreta
-      POSTGRES_DB: echonetdb
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    networks:
-      - echonetnet
-
   frontend:
     image: mariadaw/vue-app:latest
     ports:
@@ -30,16 +14,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgres://echonet:secreta@db:5432/echonetdb
-    depends_on:
-      db:
-        condition: service_healthy
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+      - DATABASE_URL=postgresql://postgres:dFSjarqIywDKddBfhtuTGAiaurpcgbXj@switchback.proxy.rlwy.net:58387/railway
+    command: python manage.py runserver 0.0.0.0:8000
     networks:
       - echonetnet
-
-volumes:
-  postgres_data:
 
 networks:
   echonetnet:

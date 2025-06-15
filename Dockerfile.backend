@@ -1,10 +1,6 @@
 # Usamos una imagen ligera y con soporte a largo plazo
 FROM python:3.11-slim
 
-# Información opcional para quien revise la imagen
-LABEL maintainer="mariadaw@tumail.com"
-LABEL description="Backend Django para DockerHub"
-
 # Evitamos interactividad durante instalaciones
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
